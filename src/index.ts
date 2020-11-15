@@ -57,7 +57,7 @@ async function fetchCustom(item: ItemUrl) {
         let ch = opts.path?.includes('?') ?  '&' : '?';
         opts.path += `${ch}${item.randomQueryParam}=${Date.now()}`;
     }
-    opts.timeout = 2000;
+    opts.timeout = 10000;
     opts.agent = getAgent();
     opts.headers = {
         'Accept-Encoding': 'identity',
@@ -212,7 +212,7 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
         path: 'MainItem.Instock',
         value: true,
         notifyOnResult: true,
-        needH2: false,
+        needH2: true,
         //randomQueryParam: 'r',
     };
 }
@@ -227,7 +227,7 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
         path: '',
         value: 'href="/en/direct-buy/add-to-cart/',
         notifyOnResult: true,
-        needH2: false,
+        needH2: true,
         //randomQueryParam: 'r',
     };
 }
