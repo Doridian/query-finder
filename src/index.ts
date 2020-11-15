@@ -1,11 +1,10 @@
 require('dotenv').config();
 
-import { SocksProxyAgent } from 'socks-proxy-agent';
 import { RequestOptions } from 'https';
-import { ServerResponse } from 'http';
 import { parse } from 'url';
 import { JSDOM } from 'jsdom';
-const { get } = require('http2-client');
+const h2 = require('h2-wrapper');
+const tough = require("tough-cookie");
 const TG = require('telegram-bot-api');
 
 class HttpError extends Error {
@@ -16,16 +15,19 @@ class HttpError extends Error {
 
 class ElementNotFoundError extends Error { }
 
-interface Item {
-    name: string;
+interface ItemUrl {
     url: string;
+    randomQueryParam?: string;
+}
+
+interface Item extends ItemUrl {
+    name: string;
     browserUrl: string;
     dataType: 'json' | 'html' | 'text';
     matcher: 'object' | 'dom_text_contains' | 'text_contains';
     path: string;
     value: string | number | boolean;
     notifyOnResult: boolean;
-    randomQueryParam?: string;
 }
 
 interface MyResponse {
@@ -34,57 +36,67 @@ interface MyResponse {
     json(): any;
 }
 
-function getAgent() {
-    return new SocksProxyAgent({
+function getProxyInfo() {
+    return {
         host: process.env.PROXY_HOST,
+        port: parseInt(process.env.PROXY_PORT!, 10),
         userId: process.env.PROXY_USER,
         password: process.env.PROXY_PASSWORD,
-        timeout: 10000,
-    });
+        type: 5,
+    };
 }
 
 function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69';
 }
 
-async function fetchCustom(item: Item) {
-    const opts = parse(item.url) as RequestOptions;
+/*
     if (item.randomQueryParam) {
         let ch = opts.path?.includes('?') ?  '&' : '?';
         opts.path += `${ch}${item.randomQueryParam}=${Date.now()}`;
     }
+*/
+
+async function fetchCustom(url: string) {
+    const opts = parse(url) as RequestOptions;
     opts.timeout = 2000;
-    opts.agent = getAgent();
     opts.headers = {
         'Accept-Encoding': 'identity',
         'User-Agent': getUserAgent(),
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
     };
-    return new Promise<MyResponse>((resolve, reject) => {
-        const req = get(opts, (res: ServerResponse) => {
-            let data = '';
-            res.on('data', chunk => {
-                data += chunk;
-            });
-            res.on('end', () => {
-                resolve({
-                    status: res.statusCode || 599,
-                    text() {
-                        return data;
-                    },
-                    json() {
-                        return JSON.parse(data);
-                    },
-                });
-            });
-        });
-        req.on('error', reject);
-    });
+    opts.ciphers = "ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 ECDHE-ECDSA-CHACHA20-POLY1305-SHA256 ECDHE-RSA-CHACHA20-POLY1305-SHA256 ECDHE-RSA-AES128-SHA ECDHE-RSA-AES256-SHA RSA-AES128-GCM-SHA256 RSA-AES256-GCM-SHA384 RSA-AES128-SHA RSA-AES256-SHA RSA-3DES-EDE-SHA";
+    (opts as any).jar = tough.CookieJar();
+    (opts as any).proxy = getProxyInfo();
+
+    console.log(url);
+
+    const client = new h2(opts);
+    const res = await client.request(url);
+    client.close();
+
+    const data = Buffer.concat(res.data).toString('utf8');
+
+    return {
+        status: res.statusCode || 599,
+        text() {
+            return data;
+        },
+        json() {
+            return JSON.parse(data);
+        },
+    };
 }
 
 async function getUrl(item: Item) {
-    const res = await fetchCustom(item);
+    let url = item.url;
+    if (item.randomQueryParam) {
+        let ch = url.includes('?') ?  '&' : '?';
+        url += `${ch}${item.randomQueryParam}=${Date.now()}`;
+    }
+    const res = await fetchCustom(url);
+
     if (res.status >= 300) {
         throw new HttpError(res.status, await res.text());
     }
@@ -239,7 +251,16 @@ async function testItem(item: Item) {
     }
 }
 
+async function showIP() {
+    const res = await fetchCustom('https://v4.icanhazip.com');
+    const txt = await res.text();
+    console.log(txt);
+}
+
 async function main() {
+    await showIP();
+    await showIP();
+    
     await testItem(makeBestBuyMatcher('bb_test', 'X', BEST_BUY_TEST));
     await testItem(makeNewEggMatcher('ne_test', 'X', NEWEGG_TEST));
     await testItem(makeAmazonMatcher('am_test', 'X', AMAZON_TEST));
