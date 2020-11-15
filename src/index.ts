@@ -217,6 +217,21 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
     };
 }
 
+function makeAMDMatcher(name: string, itemNumber: string): Item {
+    return {
+        name,
+        url: `https://www.amd.com/en/direct-buy/${itemNumber}/us`,
+        browserUrl: `https://www.amd.com/en/direct-buy/${itemNumber}/us`,
+        dataType: 'text',
+        matcher: 'text_contains',
+        path: '',
+        value: 'href="/en/direct-buy/add-to-cart/',
+        notifyOnResult: true,
+        needH2: false,
+        //randomQueryParam: 'r',
+    };
+}
+
 /*function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
     return {
         name,
@@ -237,6 +252,8 @@ const BEST_BUY_TEST = 6247254;
 const NEWEGG_5950X = 'N82E16819113663';
 const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
 const NEWEGG_TEST = 'N82E16824569006';
+const AMD_5950X = '5450881400';
+const AMD_TEST = '5335621300';
 //const AMAZON_5950X = 'B0815Y8J9N';
 //const AMAZON_5950X_DESC = 'abcdefg';
 //const AMAZON_TEST = 'B07D998212';
@@ -273,10 +290,12 @@ async function main() {
 
     await testItem(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST));
     await testItem(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST));
+    await testItem(makeAMDMatcher('AMD Test', AMD_TEST));
     //await testItem(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST));
 
     itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X));
     itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X));
+    itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X));
     //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X));
 }
 
