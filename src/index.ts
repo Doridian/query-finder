@@ -301,4 +301,7 @@ async function main() {
 
 main()
     .then(() => console.log('DONE'))
-    .catch((e) => console.error(e.stack || e));
+    .catch((e) => {
+        console.error(e.stack || e);
+        process.exit(1);
+    });
