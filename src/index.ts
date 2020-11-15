@@ -247,13 +247,12 @@ async function testItem(item: Item) {
     }
 }
 
-async function showIP() {
+async function getIP() {
     const res = await fetchCustom({
         url: 'https://v4.icanhazip.com',
         needH2: false,
     });
-    const txt = await res.text();
-    console.log(txt);
+    return await res.text(); 
 }
 
 const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
@@ -268,8 +267,9 @@ async function itemLoop(item: Item) {
 }
 
 async function main() {
-    await showIP();
-    await showIP();
+    if (await getIP() === await getIP()) {
+        throw new Error('No IP change when proxying!!!');
+    }
 
     await testItem(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST));
     await testItem(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST));
