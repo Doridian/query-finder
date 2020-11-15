@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 import { SocksProxyAgent } from 'socks-proxy-agent';
-import { RequestOptions } from 'https';
+import { RequestOptions, get as h1get } from 'https';
 import { ServerResponse } from 'http';
 import { parse } from 'url';
 import { JSDOM } from 'jsdom';
-const { get } = require('http2-client');
+const { get: h2get } = require('http2-client');
 const TG = require('telegram-bot-api');
 
 class HttpError extends Error {
@@ -16,16 +16,20 @@ class HttpError extends Error {
 
 class ElementNotFoundError extends Error { }
 
-interface Item {
-    name: string;
+interface ItemUrl {
     url: string;
+    needH2: boolean;
+    randomQueryParam?: string;
+}
+
+interface Item extends ItemUrl {
+    name: string;
     browserUrl: string;
     dataType: 'json' | 'html' | 'text';
     matcher: 'object' | 'dom_text_contains' | 'text_contains';
     path: string;
     value: string | number | boolean;
     notifyOnResult: boolean;
-    randomQueryParam?: string;
 }
 
 interface MyResponse {
@@ -47,7 +51,7 @@ function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69';
 }
 
-async function fetchCustom(item: Item) {
+async function fetchCustom(item: ItemUrl) {
     const opts = parse(item.url) as RequestOptions;
     if (item.randomQueryParam) {
         let ch = opts.path?.includes('?') ?  '&' : '?';
@@ -62,6 +66,7 @@ async function fetchCustom(item: Item) {
         'Pragma': 'no-cache',
     };
     return new Promise<MyResponse>((resolve, reject) => {
+        const get = item.needH2 ? h2get : h1get;
         const req = get(opts, (res: ServerResponse) => {
             let data = '';
             res.on('data', chunk => {
@@ -192,6 +197,7 @@ function makeBestBuyMatcher(name: string, desc: string, itemNumber: number): Ite
         path: `jsonGraph.shop.buttonstate.v5.item.skus.${itemNumber}.conditions.NONE.destinationZipCode.${zipCode}.storeId.${storeId}.context.cyp.addAll.false.value.buttonStateResponseInfos.0.buttonState`,
         value: 'SOLD_OUT',
         notifyOnResult: false,
+        needH2: true,
         //randomQueryParam: 'r',
     };
 }
@@ -206,11 +212,12 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
         path: 'MainItem.Instock',
         value: true,
         notifyOnResult: true,
+        needH2: false,
         //randomQueryParam: 'r',
     };
 }
 
-function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
+/*function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
     return {
         name,
         url: `https://www.amazon.com/dp/${itemNumber}`,
@@ -220,8 +227,9 @@ function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item
         path: '',
         value: 'id="addToCart_feature_div"',
         notifyOnResult: true,
+        needH2: false,
     };
-}
+}*/
 
 const BEST_BUY_5950X = 6438941;
 const BEST_BUY_5950X_DESC = 'amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler';
@@ -229,9 +237,9 @@ const BEST_BUY_TEST = 6247254;
 const NEWEGG_5950X = 'N82E16819113663';
 const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
 const NEWEGG_TEST = 'N82E16824569006';
-const AMAZON_5950X = 'B0815Y8J9N';
-const AMAZON_5950X_DESC = 'abcdefg';
-const AMAZON_TEST = 'B07D998212';
+//const AMAZON_5950X = 'B0815Y8J9N';
+//const AMAZON_5950X_DESC = 'abcdefg';
+//const AMAZON_TEST = 'B07D998212';
 
 async function testItem(item: Item) {
     if (!await tryCheckItem(item, false)) {
@@ -239,14 +247,37 @@ async function testItem(item: Item) {
     }
 }
 
-async function main() {
-    await testItem(makeBestBuyMatcher('bb_test', 'X', BEST_BUY_TEST));
-    await testItem(makeNewEggMatcher('ne_test', 'X', NEWEGG_TEST));
-    await testItem(makeAmazonMatcher('am_test', 'X', AMAZON_TEST));
+async function showIP() {
+    const res = await fetchCustom({
+        url: 'https://v4.icanhazip.com',
+        needH2: false,
+    });
+    const txt = await res.text();
+    console.log(txt);
+}
 
-    await tryCheckItem(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X), true);
-    await tryCheckItem(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X), true);
-    await tryCheckItem(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X), true);
+const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
+const maxSleep = parseInt(process.env.PAGE_SLEEP_MAX!, 10);
+function getSleepTime() {
+    return minSleep + (Math.random() * (maxSleep - minSleep));
+}
+
+async function itemLoop(item: Item) {
+    await tryCheckItem(item, true);
+    setTimeout(itemLoop, getSleepTime(), item);
+}
+
+async function main() {
+    await showIP();
+    await showIP();
+
+    await testItem(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST));
+    await testItem(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST));
+    //await testItem(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST));
+
+    itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X));
+    itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X));
+    //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X));
 }
 
 main()
