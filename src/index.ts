@@ -212,7 +212,7 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
         path: 'MainItem.Instock',
         value: true,
         notifyOnResult: true,
-        needH2: true,
+        needH2: false,
         //randomQueryParam: 'r',
     };
 }
