@@ -24,7 +24,7 @@ interface ItemUrl {
 
 interface Item extends ItemUrl {
     name: string;
-    browserUrl: string;
+    browserUrl?: string;
     dataType: 'json' | 'html' | 'text';
     matcher: 'object' | 'dom_text_contains' | 'text_contains';
     path: string;
@@ -168,7 +168,7 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
             console.log(`[${item.name}] FOUND!`);
             if (allowNotify) {
                 console.log(`[${item.name}] PING!`);
-                const notifyText = `FOUND: ${item.name} at ${item.browserUrl}`;
+                const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
                 await tgApi.sendMessage({
                     chat_id: tgChatId,
                     disable_web_page_preview: 'true',
@@ -185,7 +185,7 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     return false;
 }
 
-function makeBestBuyMatcher(name: string, desc: string, itemNumber: number): Item {
+function makeBestBuyMatcher(name: string, desc: string, itemNumber: string): Item {
     const zipCode = 98052;
     const storeId = 498;
     return {
@@ -221,7 +221,6 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
     return {
         name,
         url: `https://www.amd.com/en/direct-buy/${itemNumber}/us`,
-        browserUrl: `https://www.amd.com/en/direct-buy/${itemNumber}/us`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -232,11 +231,10 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
     };
 }
 
-/*function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
+function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
     return {
         name,
-        url: `https://www.amazon.com/dp/${itemNumber}`,
-        browserUrl: `https://www.amazon.com/${desc}/dp/${itemNumber}`,
+        url: `https://www.amazon.com/${desc}/dp/${itemNumber}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -244,32 +242,46 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
         notifyOnResult: true,
         needH2: false,
     };
-}*/
+}
 
-const BEST_BUY_5950X = 6438941;
+function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item {
+    return {
+        name,
+        url: `https://store.steampowered.com/app/${itemNumber}/${desc}/`,
+        dataType: 'text',
+        matcher: 'text_contains',
+        path: '',
+        value: `id="btn_add_to_cart_`,
+        notifyOnResult: true,
+        needH2: false,
+    }
+}
+
+const BEST_BUY_5950X = '6438941';
 const BEST_BUY_5950X_DESC = 'amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler';
-const BEST_BUY_TEST = 6247254;
+const BEST_BUY_TEST = '6247254';
+
 const NEWEGG_5950X = 'N82E16819113663';
 const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
 const NEWEGG_TEST = 'N82E16824569006';
+
 const AMD_5950X = '5450881400';
 const AMD_TEST = '5335621300';
-//const AMAZON_5950X = 'B0815Y8J9N';
-//const AMAZON_5950X_DESC = 'abcdefg';
-//const AMAZON_TEST = 'B07D998212';
+
+const AMAZON_5950X = 'B0815Y8J9N';
+const AMAZON_5950X_DESC = 'abcdefg';
+const AMAZON_TEST = 'B07D998212';
+
+const STEAM_INDEX_BASE_STATION = '1059570';
+const STEAM_INDEX_BASE_STATION_DESC = 'Valve_Index_Base_Station';
+const STEAM_TEST = '1072820';
+const STEAM_TEST_DESC = 'Face_Gasket_for_Valve_Index_Headset__2_Pack';
+
 
 async function testItem(item: Item) {
     if (!await tryCheckItem(item, false)) {
         throw new Error('Test item NOT FOUND!');
     }
-}
-
-async function getIP() {
-    const res = await fetchCustom({
-        url: 'https://v4.icanhazip.com',
-        needH2: false,
-    });
-    return await res.text(); 
 }
 
 const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
@@ -284,18 +296,16 @@ async function itemLoop(item: Item) {
 }
 
 async function main() {
-    if (await getIP() === await getIP()) {
-        throw new Error('No IP change when proxying!!!');
-    }
-
     await testItem(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST));
     await testItem(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST));
     await testItem(makeAMDMatcher('AMD Test', AMD_TEST));
+    await testItem(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST));
     //await testItem(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST));
 
     itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X));
     itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X));
     itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X));
+    itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION));
     //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X));
 }
 
