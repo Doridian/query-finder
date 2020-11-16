@@ -1,12 +1,18 @@
 require('dotenv').config();
 
 import { SocksProxyAgent } from 'socks-proxy-agent';
-import { RequestOptions, get as h1get } from 'https';
+import { RequestOptions, request as h1request } from 'https';
 import { ServerResponse } from 'http';
 import { parse } from 'url';
 import { JSDOM } from 'jsdom';
-const { get: h2get } = require('http2-client');
+import { inflate, brotliDecompress, gunzip } from 'zlib';
+import { promisify } from 'util';
+const { request: h2request } = require('http2-client');
 const TG = require('telegram-bot-api');
+
+const inflateAsync = promisify(inflate);
+const brotliDecompressAsync = promisify(brotliDecompress);
+const gunzipAsync = promisify(gunzip);
 
 class HttpError extends Error {
     constructor(code: number, public body: string) {
@@ -59,32 +65,57 @@ async function fetchCustom(item: ItemUrl) {
     }
     opts.timeout = 10000;
     opts.agent = getAgent();
+    opts.method = 'GET';
     opts.headers = {
-        'Accept-Encoding': 'identity',
+        'Accept-Encoding': 'gzip, deflate, br',
         'User-Agent': getUserAgent(),
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
     };
     return new Promise<MyResponse>((resolve, reject) => {
-        const get = item.needH2 ? h2get : h1get;
-        const req = get(opts, (res: ServerResponse) => {
-            let data = '';
+        const request = item.needH2 ? h2request : h1request;
+        const req = request(opts, (res: ServerResponse) => {
+            const chunks: Buffer[] = [];
             res.on('data', chunk => {
-                data += chunk;
+                chunks.push(Buffer.from(chunk));
             });
-            res.on('end', () => {
+            res.on('end', async () => {
+                const allChunks = Buffer.concat(chunks);
+
+                let data: Buffer;
+                const encoding = (res as any).headers['content-encoding'] || 'identity';
+
+                switch (encoding) {
+                    case 'identity':
+                    default:
+                        data = allChunks;
+                        break;
+                    case 'gzip':
+                        data = await gunzipAsync(allChunks);
+                        break;
+                    case 'br':
+                        data = await brotliDecompressAsync(allChunks);
+                        break;
+                    case 'deflate':
+                        data = await inflateAsync(allChunks);
+                        break;
+                }
+
+                const dataStr = data.toString('utf8');
+
                 resolve({
                     status: res.statusCode || 599,
                     text() {
-                        return data;
+                        return dataStr;
                     },
                     json() {
-                        return JSON.parse(data);
+                        return JSON.parse(dataStr);
                     },
                 });
             });
         });
         req.on('error', reject);
+        req.end();
     });
 }
 
