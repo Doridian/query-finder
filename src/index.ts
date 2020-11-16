@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 import { SocksProxyAgent } from 'socks-proxy-agent';
-import { RequestOptions, request as h1request } from 'https';
+import { RequestOptions, request as h1request, Agent } from 'https';
 import { ServerResponse } from 'http';
 import { parse } from 'url';
 import { JSDOM } from 'jsdom';
@@ -25,6 +25,7 @@ class ElementNotFoundError extends Error { }
 interface ItemUrl {
     url: string;
     needH2: boolean;
+    needProxy: boolean;
     randomQueryParam?: string;
 }
 
@@ -44,13 +45,19 @@ interface MyResponse {
     json(): any;
 }
 
-function getAgent() {
+function getProxyAgent() {
     return new SocksProxyAgent({
         host: process.env.PROXY_HOST,
         userId: process.env.PROXY_USER,
         password: process.env.PROXY_PASSWORD,
         timeout: 10000,
     });
+}
+
+function getAgent() {
+    return new Agent({
+        timeout: 10000,
+    })
 }
 
 function getUserAgent() {
@@ -64,7 +71,11 @@ async function fetchCustom(item: ItemUrl) {
         opts.path += `${ch}${item.randomQueryParam}=${Date.now()}`;
     }
     opts.timeout = 10000;
-    opts.agent = getAgent();
+    if (item.needProxy) {
+        opts.agent = getProxyAgent();
+    } else {
+        opts.agent = getAgent();
+    }
     opts.method = 'GET';
     opts.headers = {
         'Accept-Encoding': 'gzip, deflate, br',
@@ -229,6 +240,7 @@ function makeBestBuyMatcher(name: string, desc: string, itemNumber: string): Ite
         value: 'SOLD_OUT',
         notifyOnResult: false,
         needH2: true,
+        needProxy: false,
         //randomQueryParam: 'r',
     };
 }
@@ -244,6 +256,7 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
         value: true,
         notifyOnResult: true,
         needH2: false,
+        needProxy: true,
         //randomQueryParam: 'r',
     };
 }
@@ -257,7 +270,8 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
         path: '',
         value: 'href="/en/direct-buy/add-to-cart/',
         notifyOnResult: true,
-        needH2: true,
+        needH2: false,
+        needProxy: false,
         //randomQueryParam: 'r',
     };
 }
@@ -272,6 +286,7 @@ function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item
         value: 'id="addToCart_feature_div"',
         notifyOnResult: true,
         needH2: false,
+        needProxy: true,
     };
 }
 
@@ -285,6 +300,7 @@ function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item 
         value: `id="btn_add_to_cart_`,
         notifyOnResult: true,
         needH2: false,
+        needProxy: false,
     }
 }
 
