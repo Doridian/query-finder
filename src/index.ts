@@ -270,7 +270,7 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
         path: '',
         value: 'href="/en/direct-buy/add-to-cart/',
         notifyOnResult: true,
-        needH2: false,
+        needH2: true,
         needProxy: false,
         //randomQueryParam: 'r',
     };
