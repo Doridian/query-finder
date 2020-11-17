@@ -7,6 +7,7 @@ import { parse } from 'url';
 import { JSDOM } from 'jsdom';
 import { inflate, brotliDecompress, gunzip } from 'zlib';
 import { promisify } from 'util';
+import { writeFile } from 'fs';
 const { request: h2request } = require('http2-client');
 const TG = require('telegram-bot-api');
 
@@ -42,7 +43,6 @@ interface Item extends ItemUrl {
 interface MyResponse {
     status: number;
     text(): string;
-    json(): any;
 }
 
 function getProxyAgent() {
@@ -119,9 +119,6 @@ async function fetchCustom(item: ItemUrl) {
                     text() {
                         return dataStr;
                     },
-                    json() {
-                        return JSON.parse(dataStr);
-                    },
                 });
             });
         });
@@ -171,18 +168,24 @@ async function checkPlainTextContains(data: string, path: string, value: any) {
 
 async function checkItem(item: Item) {
     const res = await getUrl(item);
+    const dataStr = await res.text();
     let data;
     switch (item.dataType) {
         case 'html':
-            data = new JSDOM(await res.text());
+            data = new JSDOM(dataStr);
             break;
         case 'text':
-            data = await res.text();
+            data = dataStr;
             break;
         case 'json':
-            data = await res.json();
+            data = JSON.parse(dataStr);
             break;
     }
+
+    writeFile(`last/${item.name}.${item.dataType}`, dataStr, (err) => {
+        console.error(err);
+    });
+
     let matcher;
     switch (item.matcher) {
         case 'object':
