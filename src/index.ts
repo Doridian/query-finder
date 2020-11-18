@@ -183,7 +183,7 @@ async function checkItem(item: Item) {
     }
 
     writeFile(`last/${item.name}.${item.dataType}`, dataStr, (err) => {
-        console.error(err);
+        if (err) console.error(err);
     });
 
     let matcher;
