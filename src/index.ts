@@ -353,22 +353,27 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'ok' };
     curStatus.text = status;
     curStatus.date = new Date();
-    let useDateRange: DateRange | undefined;
+    let useDateRange: DateRange;
     if (result) {
         curStatus.type = 'ok';
+        if (!curStatus.dateLastStock) {
+            curStatus.dateLastStock = {};
+        }
         useDateRange = curStatus.dateLastStock;
     } else if (errored) {
         curStatus.type = 'error';
+        if (!curStatus.dateLastError) {
+            curStatus.dateLastError = {};
+        }
         useDateRange = curStatus.dateLastError;
     } else {
         curStatus.type = 'warning';
+        if (!curStatus.dateLastOutOfStock) {
+            curStatus.dateLastOutOfStock = {};
+        }
         useDateRange = curStatus.dateLastOutOfStock;
     }
     LAST_STATUS_MAP[item.name] = curStatus;
-
-    if (!useDateRange) {
-        useDateRange = {};
-    }
 
     if (curStatus.curDateRange) {
         if (curStatus.curDateRange !== useDateRange) {
