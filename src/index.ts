@@ -402,8 +402,11 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         if (matches === item.notifyOnResult) {
             status = 'In stock';
             result = true;
+            if (allowNotify) {
+                console.log(`[${item.name}] FOUND!`);
+            }
+
             if (allowNotify && curStatus.type === 'instock') {
-                console.log(`[${item.name}] FOUND! PING!`);
                 const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
                 // Do not await this!
                 tgApi.sendMessage({
