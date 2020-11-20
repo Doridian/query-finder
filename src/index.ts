@@ -314,10 +314,13 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
             if (allowNotify) {
                 console.log(`[${item.name}] FOUND! PING!`);
                 const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
-                await tgApi.sendMessage({
+                // Do not await this!
+                tgApi.sendMessage({
                     chat_id: tgChatId,
                     disable_web_page_preview: 'true',
                     text: notifyText,
+                }).catch((err: any) => {
+                    console.error(err);
                 });
             }
         } else {
