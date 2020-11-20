@@ -8,8 +8,6 @@ import { JSDOM } from 'jsdom';
 import { inflate, brotliDecompress, gunzip } from 'zlib';
 import { promisify } from 'util';
 import { writeFile, readFileSync } from 'fs';
-import { load } from 'dotenv/types';
-import { type } from 'os';
 const { request: h2request } = require('http2-client');
 const TG = require('telegram-bot-api');
 
@@ -61,6 +59,8 @@ class HttpError extends Error {
 }
 
 class ElementNotFoundError extends Error { }
+
+let FULLY_INITED = false;
 
 function loadStatus() {
     function reviver(_key: any , value: any) {
@@ -136,6 +136,9 @@ const srv = createServer((_req, res) => {
         const v = LAST_STATUS_MAP[k];
         const i = ITEMS_MAP[k];
         if (!i) {
+            if (FULLY_INITED) {
+                delete LAST_STATUS_MAP[k];
+            }
             continue;
         }
         htmlArray.push(`<tr>
@@ -622,7 +625,10 @@ async function main() {
 }
 
 main()
-    .then(() => console.log('DONE'))
+    .then(() => {
+        console.log('INIT DONE');
+        FULLY_INITED = true;
+    })
     .catch((e) => {
         console.error(e.stack || e);
         process.exit(1);
