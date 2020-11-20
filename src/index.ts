@@ -7,7 +7,8 @@ import { parse } from 'url';
 import { JSDOM } from 'jsdom';
 import { inflate, brotliDecompress, gunzip } from 'zlib';
 import { promisify } from 'util';
-import { writeFile } from 'fs';
+import { writeFile, readFileSync } from 'fs';
+import { load } from 'dotenv/types';
 const { request: h2request } = require('http2-client');
 const TG = require('telegram-bot-api');
 
@@ -29,8 +30,52 @@ interface Status {
     dateLastOutOfStock?: DateRange;
     curDateRange?: DateRange;
 }
+
+interface ItemUrl {
+    url: string;
+    needH2: boolean;
+    needProxy: boolean;
+    randomQueryParam?: string;
+}
+
+interface Item extends ItemUrl {
+    name: string;
+    browserUrl?: string;
+    dataType: 'json' | 'html' | 'text';
+    matcher: 'object' | 'dom_text_contains' | 'text_contains';
+    path: string;
+    value: string | number | boolean;
+    notifyOnResult: boolean;
+}
+
+interface MyResponse {
+    status: number;
+    text(): string;
+}
+
+class HttpError extends Error {
+    constructor(public code: number, public body: string) {
+        super(`HTTP Code: ${code}`);
+    }
+}
+
+class ElementNotFoundError extends Error { }
+
+function loadStatus() {
+    let _status: { [key: string]: Status } = {};
+    try {
+        _status = JSON.parse(readFileSync('./last/_status.json', 'utf8'));
+    } catch { }
+    return _status;
+}
+const LAST_STATUS_MAP: { [key: string]: Status } = loadStatus();
+function writeStatus() {
+    writeFile('./last/_status.json', JSON.stringify(LAST_STATUS_MAP), (err) => {
+        if (err) console.error(err);
+    })
+}
+
 const ITEMS_MAP: { [key: string]: Item } = {};
-const LAST_STATUS_MAP: { [key: string]: Status } = {};
 
 const ONE_MINUTE = 60;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -66,11 +111,14 @@ function formatDate(date: Date) {
     return `<span class="diff-${diffOrders}">${strArray.join(' ')} ago</span>`;
 }
 
-const srv = createServer((req, res) => {
+const srv = createServer((_req, res) => {
     const htmlArray: string[] = [];
     for (const k of Object.keys(LAST_STATUS_MAP)) {
         const v = LAST_STATUS_MAP[k];
         const i = ITEMS_MAP[k];
+        if (!i) {
+            continue;
+        }
         htmlArray.push(`<tr>
     <td scope="row"><a href="${i.browserUrl || i.url}" target="_blank">${k}</a></td>
     <td class="status-${v.type}">${v.text}</td>
@@ -127,36 +175,6 @@ const srv = createServer((req, res) => {
     res.end();
 });
 srv.listen(process.env.PORT);
-
-class HttpError extends Error {
-    constructor(public code: number, public body: string) {
-        super(`HTTP Code: ${code}`);
-    }
-}
-
-class ElementNotFoundError extends Error { }
-
-interface ItemUrl {
-    url: string;
-    needH2: boolean;
-    needProxy: boolean;
-    randomQueryParam?: string;
-}
-
-interface Item extends ItemUrl {
-    name: string;
-    browserUrl?: string;
-    dataType: 'json' | 'html' | 'text';
-    matcher: 'object' | 'dom_text_contains' | 'text_contains';
-    path: string;
-    value: string | number | boolean;
-    notifyOnResult: boolean;
-}
-
-interface MyResponse {
-    status: number;
-    text(): string;
-}
 
 function getProxyAgent() {
     return new SocksProxyAgent({
@@ -390,6 +408,8 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         useDateRange.start = curStatus.date;
         useDateRange.end = undefined;
     }
+
+    writeStatus();
 
     return result;
 }
