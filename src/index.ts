@@ -384,7 +384,7 @@ async function main() {
         testLoop(makeAMDMatcher('AMD Test', AMD_TEST)),
         testLoop(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST)),
         testLoop(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST)),
-        //await testLoop(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST),;
+        //await testLoop(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST),
     ]);
 
     await Promise.all([
