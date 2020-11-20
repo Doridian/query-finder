@@ -116,9 +116,10 @@ const srv = createServer((req, res) => {
             <tbody>
                 ${htmlArray.join('')}
             </tbody>
-        </table>
-        <br><br><br><br><br>
-        <h4>Page generated at: ${(new Date()).toISOString()}</h4>
+        </table>        
+        <div class="alert alert-info" role="alert">
+            Page generated at: ${(new Date()).toISOString()}
+        </div>
     </body>
 </html>`);
     res.end();
