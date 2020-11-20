@@ -340,7 +340,7 @@ async function checkItem(item: Item) {
             break;
     }
 
-    const result = matcher(data, item.path, item.value);
+    const result = await matcher(data, item.path, item.value);
 
     writeFile(`last/${item.name}.${result}.${item.dataType}`, dataStr, (err) => {
         if (err) console.error(err);
