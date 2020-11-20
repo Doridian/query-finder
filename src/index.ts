@@ -95,6 +95,8 @@ const srv = createServer((req, res) => {
             </tr>
             ${htmlArray.join('')}
         </table>
+        <br><br><br><br><br>
+        Page generated at: ${(new Date()).toISOString()}
     </body>
 </html>`);
     res.end();
