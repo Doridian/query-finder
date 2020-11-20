@@ -370,10 +370,6 @@ const tgApi = new TG({
 });
 
 function typeToDateRange(curStatus: Status): DateRange {
-    if (!curStatus.type) {
-        return {};
-    }
-
     switch (curStatus.type) { 
         case 'instock':
             if (!curStatus.dateLastStock) {
@@ -390,6 +386,8 @@ function typeToDateRange(curStatus: Status): DateRange {
                 curStatus.dateLastError = {};
             }
             return curStatus.dateLastError;
+        default:
+            return {};
     }
 }
 
