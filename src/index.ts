@@ -17,18 +17,38 @@ const gunzipAsync = promisify(gunzip);
 
 interface Status {
     text: string;
-    date: string;
-    dateLastStock?: string;
-    dateLastError?: string;
-    dateLastOutOfStock?: string;
+    date: Date;
+    dateLastStock?: Date;
+    dateLastError?: Date;
+    dateLastOutOfStock?: Date;
 }
 const LAST_STATUS_MAP: { [key: string]: Status } = {};
 
-function formatDate(date?: string) {
+const ONE_MINUTE = 60;
+const ONE_HOUR = 60 * ONE_MINUTE;
+const MAX_TIME_AGO = 24 * ONE_HOUR;
+function formatDate(date?: Date) {
     if (!date) {
         return 'N/A';
     }
-    return date;
+
+    let diff = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (diff > MAX_TIME_AGO) {
+        return date.toISOString();
+    }
+
+    let strArray: string[] = [];
+    if (diff >= ONE_HOUR) {
+        strArray.push(`${Math.floor(diff / ONE_HOUR)}h`);
+        diff %= ONE_HOUR;
+    }
+    if (diff >= ONE_MINUTE) {
+        strArray.push(`${Math.floor(diff / ONE_MINUTE)}m`);
+        diff %= ONE_MINUTE;
+    }
+    strArray.push(`${diff}s`);
+
+    return strArray.join(' ');
 }
 
 const srv = createServer((req, res) => {
@@ -296,7 +316,7 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
 
     const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '' };
     curStatus.text = status;
-    curStatus.date = (new Date()).toISOString();
+    curStatus.date = new Date();
     if (result) {
         curStatus.dateLastStock = curStatus.date;
     } else if (errored) {
