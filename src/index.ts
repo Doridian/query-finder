@@ -87,7 +87,7 @@ const srv = createServer((req, res) => {
         </style>
     </head>
     <body>
-        <table>
+        <table border=1>
             <tr>
                 <td><b>Item</b></td>
                 <td><b>Status</b></td>
