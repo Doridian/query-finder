@@ -84,10 +84,14 @@ const srv = createServer((req, res) => {
             td.status-error, td.diff-0 {
                 color: red;
             }
+            table {
+                border-collapse: separate;
+                border-spacing: 15px;
+            }
         </style>
     </head>
     <body>
-        <table border=1>
+        <table>
             <tr>
                 <td><b>Item</b></td>
                 <td><b>Status</b></td>
