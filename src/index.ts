@@ -102,23 +102,25 @@ const srv = createServer((req, res) => {
         </style>
     </head>
     <body>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Item</td>
-                    <th scope="col">Status</td>
-                    <th scope="col">Last check</td>
-                    <th scope="col">Last OoS</td>
-                    <th scope="col">Last Stock</td>
-                    <th scope="col">Last Error</td>
-                </tr>
-            </thead>
-            <tbody>
-                ${htmlArray.join('')}
-            </tbody>
-        </table>        
-        <div class="alert alert-info" role="alert">
-            Page generated at: ${(new Date()).toISOString()}
+        <div class="container-fluid">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</td>
+                        <th scope="col">Status</td>
+                        <th scope="col">Last check</td>
+                        <th scope="col">Last OoS</td>
+                        <th scope="col">Last Stock</td>
+                        <th scope="col">Last Error</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${htmlArray.join('')}
+                </tbody>
+            </table>        
+            <div class="alert alert-info" role="alert">
+                Page generated at: ${(new Date()).toISOString()}
+            </div>
         </div>
     </body>
 </html>`);
