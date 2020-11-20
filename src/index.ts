@@ -88,7 +88,8 @@ const ITEMS_MAP: { [key: string]: Item } = {};
 
 const ONE_MINUTE = 60;
 const ONE_HOUR = 60 * ONE_MINUTE;
-const MAX_TIME_AGO = 24 * ONE_HOUR;
+const ONE_DAY = 24 * ONE_HOUR;
+const MAX_TIME_AGO = 30 * ONE_DAY;
 function formatDateRange(dateRange?: DateRange) {
     if (!dateRange || !dateRange.start) {
         return '<span>-</span>';
@@ -100,20 +101,28 @@ function formatDateRange(dateRange?: DateRange) {
 function formatDate(date: Date) {
     let diff = Math.floor((Date.now() - date.getTime()) / 1000);
     if (diff > MAX_TIME_AGO) {
-        return date.toISOString();
+        return `<span>${date.toISOString()}</span>`;
     }
 
     let strArray: string[] = [];
     let diffOrders = 0;
+    if (diff >= ONE_DAY) {
+        strArray.push(`${Math.floor(diff / ONE_DAY)}d`);
+        diff %= ONE_DAY;
+        if (diffOrders < 3)
+            diffOrders = 3;
+    }
     if (diff >= ONE_HOUR) {
         strArray.push(`${Math.floor(diff / ONE_HOUR)}h`);
         diff %= ONE_HOUR;
-        diffOrders++;
+        if (diffOrders < 2)
+            diffOrders = 2;
     }
     if (diff >= ONE_MINUTE) {
         strArray.push(`${Math.floor(diff / ONE_MINUTE)}m`);
         diff %= ONE_MINUTE;
-        diffOrders++;
+        if (diffOrders < 1)
+            diffOrders = 1;
     }
     strArray.push(`${diff}s`);
 
@@ -148,6 +157,9 @@ const srv = createServer((_req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
         <style>
+            .diff-3 {
+                color: blue;
+            }
             td.status-ok, .diff-2 {
                 color: green;
             }
