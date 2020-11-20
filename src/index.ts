@@ -339,7 +339,16 @@ async function checkItem(item: Item) {
             matcher = checkPlainTextContains;
             break;
     }
-    return matcher(data, item.path, item.value);
+
+    const result = matcher(data, item.path, item.value);
+
+    if (result) {
+        writeFile(`last/${item.name}.instock.${item.dataType}`, dataStr, (err) => {
+            if (err) console.error(err);
+        });
+    }
+
+    return result;
 }
 
 const tgChatId = process.env.TELEGRAM_CHAT_ID;
