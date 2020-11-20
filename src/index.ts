@@ -24,11 +24,25 @@ interface Status {
 }
 const LAST_STATUS_MAP: { [key: string]: Status } = {};
 
+function formatDate(date?: string) {
+    if (!date) {
+        return 'N/A';
+    }
+    return date;
+}
+
 const srv = createServer((req, res) => {
     const htmlArray: string[] = [];
     for (const k of Object.keys(LAST_STATUS_MAP)) {
         const v = LAST_STATUS_MAP[k];
-        htmlArray.push(`<tr><td>${k}</td><td>${v.text}</td><td>${v.date}</td></tr>`);
+        htmlArray.push(`<tr>
+    <td>${k}</td>
+    <td>${v.text}</td>
+    <td>${formatDate(v.date)}</td>
+    <td>${formatDate(v.dateLastOutOfStock)}</td>
+    <td>${formatDate(v.dateLastStock)}</td>
+    <td>${formatDate(v.dateLastError)}</td>
+</tr>`);
     }
     res.setHeader('Content-Type', 'text/html');
     res.write(`<!DOCTYPE html>
@@ -41,7 +55,10 @@ const srv = createServer((req, res) => {
             <tr>
                 <td><b>Item</b></td>
                 <td><b>Status</b></td>
-                <td><b>Time</b></td>
+                <td><b>Last check</b></td>
+                <td><b>Last OoS</b></td>
+                <td><b>Last Stock</b></td>
+                <td><b>Last Error</b></td>
             </tr>
             ${htmlArray.join('')}
         </table>
