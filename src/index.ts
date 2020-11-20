@@ -117,6 +117,7 @@ const srv = createServer((_req, res) => {
         const v = LAST_STATUS_MAP[k];
         const i = ITEMS_MAP[k];
         if (!i) {
+            delete LAST_STATUS_MAP[k];
             continue;
         }
         htmlArray.push(`<tr>
