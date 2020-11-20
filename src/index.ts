@@ -15,12 +15,17 @@ const inflateAsync = promisify(inflate);
 const brotliDecompressAsync = promisify(brotliDecompress);
 const gunzipAsync = promisify(gunzip);
 
-const LAST_STATUS_MAP: { [key: string]: string } = {};
+interface Status {
+    text: string;
+    date: string;
+}
+const LAST_STATUS_MAP: { [key: string]: Status } = {};
 
 function writeStatus() {
     const strArray: string[] = [];
     for (const k of Object.keys(LAST_STATUS_MAP)) {
-        strArray.push(`[${k}] ${LAST_STATUS_MAP[k]}`);
+        const v = LAST_STATUS_MAP[k];
+        strArray.push(`[${k}] <${v.date}> ${v.text}`);
     }
     writeFile('last/status', strArray.join('\n'), (err) => {
         if (err) console.error(err);
@@ -30,10 +35,11 @@ function writeStatus() {
 const srv = createServer((req, res) => {
     const htmlArray: string[] = [];
     for (const k of Object.keys(LAST_STATUS_MAP)) {
-        htmlArray.push(`<tr><td>${k}</td><td>${LAST_STATUS_MAP[k]}</td></tr>`);
+        const v = LAST_STATUS_MAP[k];
+        htmlArray.push(`<tr><td>${k}</td><td>${v.text}</td><td>${v.date}</td></tr>`);
     }
     res.setHeader('Content-Type', 'text/html');
-    res.write(`<!DOCTYPE html><html><head><title>Query-Finder</title></head><body><table><tr><td>Item</td><td>Status</td></tr>${htmlArray.join('')}</body></html>`);
+    res.write(`<!DOCTYPE html><html><head><title>Query-Finder</title></head><body><table><tr><td>Item</td><td>Status</td><td>Time</td></tr>${htmlArray.join('')}</body></html>`);
     res.end();
 });
 srv.listen(process.env.PORT);
@@ -261,7 +267,10 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         }
         console.error(`[${item.name}] ${status}`);
     }
-    LAST_STATUS_MAP[item.name] = status;
+    LAST_STATUS_MAP[item.name] = {
+        text: status,
+        date: (new Date()).toISOString(),
+    };
     writeStatus();
     return result;
 }
