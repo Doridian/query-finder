@@ -354,29 +354,47 @@ async function testItem(item: Item) {
 
 const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
 const maxSleep = parseInt(process.env.PAGE_SLEEP_MAX!, 10);
-function getSleepTime() {
-    return minSleep + (Math.random() * (maxSleep - minSleep));
+const minSleepTest = parseInt(process.env.TEST_SLEEP_MIN!, 10);
+const maxSleepTest = parseInt(process.env.TEST_SLEEP_MAX!, 10);
+function getSleepTime(min: number, max: number) {
+    return min + (Math.random() * (max - min));
+}
+
+async function testLoop(item: Item, throwError: boolean = true) {
+    try {
+        await testItem(item);
+    } catch (e) {
+        if (throwError) {
+            throw e;
+        }
+        console.log(`[${item.name}] TEST ERROR!`);
+    }
+    setTimeout(itemLoop, getSleepTime(minSleepTest, maxSleepTest), item, false);
 }
 
 async function itemLoop(item: Item) {
     await tryCheckItem(item, true);
-    setTimeout(itemLoop, getSleepTime(), item);
+    setTimeout(itemLoop, getSleepTime(minSleep, maxSleep), item);
 }
 
 async function main() {
-    await testItem(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST));
-    await testItem(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST));
-    await testItem(makeAMDMatcher('AMD Test', AMD_TEST));
-    await testItem(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST));
-    await testItem(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST));
-    //await testItem(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST));
+    await Promise.all([
+        testLoop(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST)),
+        testLoop(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST)),
+        testLoop(makeAMDMatcher('AMD Test', AMD_TEST)),
+        testLoop(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST)),
+        testLoop(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST)),
+        //await testLoop(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST),;
+    ]);
 
-    itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X));
-    itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X));
-    itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X));
-    itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION));
-    itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X));
-    //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X));
+    await Promise.all([
+        itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X)),
+        itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X)),
+        itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X)),
+        itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION)),
+        itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X)),
+        //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X)),
+    ]);
 }
 
 main()
