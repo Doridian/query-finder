@@ -18,19 +18,11 @@ const gunzipAsync = promisify(gunzip);
 interface Status {
     text: string;
     date: string;
+    dateLastStock?: string;
+    dateLastError?: string;
+    dateLastOutOfStock?: string;
 }
 const LAST_STATUS_MAP: { [key: string]: Status } = {};
-
-function writeStatus() {
-    const strArray: string[] = [];
-    for (const k of Object.keys(LAST_STATUS_MAP)) {
-        const v = LAST_STATUS_MAP[k];
-        strArray.push(`[${k}] <${v.date}> ${v.text}`);
-    }
-    writeFile('last/status', strArray.join('\n'), (err) => {
-        if (err) console.error(err);
-    });
-}
 
 const srv = createServer((req, res) => {
     const htmlArray: string[] = [];
@@ -39,7 +31,22 @@ const srv = createServer((req, res) => {
         htmlArray.push(`<tr><td>${k}</td><td>${v.text}</td><td>${v.date}</td></tr>`);
     }
     res.setHeader('Content-Type', 'text/html');
-    res.write(`<!DOCTYPE html><html><head><title>Query-Finder</title></head><body><table><tr><td>Item</td><td>Status</td><td>Time</td></tr>${htmlArray.join('')}</body></html>`);
+    res.write(`<!DOCTYPE html>
+<html>
+    <head>
+        <title>Query-Finder</title>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td><b>Item</b></td>
+                <td><b>Status</b></td>
+                <td><b>Time</b></td>
+            </tr>
+            ${htmlArray.join('')}
+        </table>
+    </body>
+</html>`);
     res.end();
 });
 srv.listen(process.env.PORT);
@@ -238,6 +245,7 @@ const tgApi = new TG({
 async function tryCheckItem(item: Item, allowNotify: boolean) {
     let status = 'N/A';
     let result = false;
+    let errored = false;
     try {
         const matches = await checkItem(item);
         if (matches === item.notifyOnResult) {
@@ -259,6 +267,7 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
             }
         }
     } catch(e) {
+        errored = true;
         if (e instanceof HttpError) {
             status = `HTTP error: ${e.code}`;
         } else {
@@ -267,11 +276,19 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         }
         console.error(`[${item.name}] ${status}`);
     }
-    LAST_STATUS_MAP[item.name] = {
-        text: status,
-        date: (new Date()).toISOString(),
-    };
-    writeStatus();
+
+    const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '' };
+    curStatus.text = status;
+    curStatus.date = (new Date()).toISOString();
+    if (result) {
+        curStatus.dateLastStock = curStatus.date;
+    } else if (errored) {
+        curStatus.dateLastError = curStatus.date;
+    } else {
+        curStatus.dateLastOutOfStock = curStatus.date;
+    }
+    LAST_STATUS_MAP[item.name] = curStatus;
+
     return result;
 }
 
