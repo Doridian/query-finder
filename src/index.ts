@@ -16,23 +16,24 @@ const brotliDecompressAsync = promisify(brotliDecompress);
 const gunzipAsync = promisify(gunzip);
 
 const LAST_STATUS_MAP: { [key: string]: string } = {};
-let LAST_STATUS_TEXT = 'Waiting...';
 
 function writeStatus() {
     const strArray: string[] = [];
     for (const k of Object.keys(LAST_STATUS_MAP)) {
         strArray.push(`[${k}] ${LAST_STATUS_MAP[k]}`);
     }
-    const str = strArray.join('\n');
-    LAST_STATUS_TEXT = str;
-    writeFile('last/status', str, (err) => {
+    writeFile('last/status', strArray.join('\n'), (err) => {
         if (err) console.error(err);
     });
 }
 
 const srv = createServer((req, res) => {
-    res.setHeader('Content-Type', 'text/plain');
-    res.write(LAST_STATUS_TEXT);
+    const htmlArray: string[] = [];
+    for (const k of Object.keys(LAST_STATUS_MAP)) {
+        htmlArray.push(`<tr><td>${k}</td><td>${LAST_STATUS_MAP[k]}</td></tr>`);
+    }
+    res.setHeader('Content-Type', 'text/html');
+    res.write(`<!DOCTYPE html><html><head><title>Query-Finder</title></head><body><table><tr><td>Item</td><td>Status</td></tr>${htmlArray.join('')}</body></html>`);
     res.end();
 });
 srv.listen(process.env.PORT);
