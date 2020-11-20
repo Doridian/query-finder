@@ -2,7 +2,7 @@ require('dotenv').config();
 
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import { RequestOptions, request as h1request, Agent } from 'https';
-import { ServerResponse } from 'http';
+import { ServerResponse, createServer } from 'http';
 import { parse } from 'url';
 import { JSDOM } from 'jsdom';
 import { inflate, brotliDecompress, gunzip } from 'zlib';
@@ -14,6 +14,28 @@ const TG = require('telegram-bot-api');
 const inflateAsync = promisify(inflate);
 const brotliDecompressAsync = promisify(brotliDecompress);
 const gunzipAsync = promisify(gunzip);
+
+const LAST_STATUS_MAP: { [key: string]: string } = {};
+let LAST_STATUS_TEXT = 'Waiting...';
+
+function writeStatus() {
+    const strArray: string[] = [];
+    for (const k of Object.keys(LAST_STATUS_MAP)) {
+        strArray.push(`[${k}] ${LAST_STATUS_MAP[k]}`);
+    }
+    const str = strArray.join('\n');
+    LAST_STATUS_TEXT = str;
+    writeFile('last/status', str, (err) => {
+        if (err) console.error(err);
+    });
+}
+
+const srv = createServer((req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.write(LAST_STATUS_TEXT);
+    res.end();
+});
+srv.listen(process.env.PORT);
 
 class HttpError extends Error {
     constructor(public code: number, public body: string) {
@@ -207,9 +229,11 @@ const tgApi = new TG({
 });
 
 async function tryCheckItem(item: Item, allowNotify: boolean) {
+    let status = 'N/A';
     try {
         const matches = await checkItem(item);
         if (matches === item.notifyOnResult) {
+            status = 'In stock';
             if (allowNotify) {
                 console.log(`[${item.name}] FOUND! PING!`);
                 const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
@@ -220,16 +244,23 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
                 });
             }
             return true;
-        } else if (allowNotify) {
-            console.log(`[${item.name}] NOT FOUND!`);
+        } else {
+            status = 'Out of stock';
+            if (allowNotify) {
+                console.log(`[${item.name}] NOT FOUND!`);
+            }
         }
     } catch(e) {
         if (e instanceof HttpError) {
-            console.error(`[${item.name}] HTTP Error: ${e.code}`);
+            status = `HTTP error: ${e.code}`;
         } else {
-            console.error(`[${item.name}] Exception: ${e.stack || e.message || JSON.stringify(e)}`);
+            status = `Exception: ${e}`;
+            console.error(e.stack || e);
         }
+        console.error(`[${item.name}] ${status}`);
     }
+    LAST_STATUS_MAP[item.name] = status;
+    writeStatus();
     return false;
 }
 
