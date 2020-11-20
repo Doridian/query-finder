@@ -22,7 +22,7 @@ interface DateRange {
     end?: Date;
 }
 
-type StatusType = 'instock' | 'warning' | 'error';
+type StatusType = 'instock' | 'outofstock' | 'error';
 interface Status {
     text: string;
     type: StatusType;
@@ -378,7 +378,7 @@ function typeToDateRange(curType: StatusType, curStatus: Status): DateRange {
                 curStatus.dateLastStock = {};
             }
             return curStatus.dateLastStock;
-        case 'warning':
+        case 'outofstock':
             if (!curStatus.dateLastOutOfStock) {
                 curStatus.dateLastOutOfStock = {};
             }
@@ -442,7 +442,7 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     } else if (errored) {
         curType = 'error';
     } else {
-        curType = 'warning';
+        curType = 'outofstock';
     }
     
     if (curStatus.type !== curType) {
