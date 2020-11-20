@@ -48,7 +48,7 @@ function formatDate(date?: Date) {
     }
     strArray.push(`${diff}s`);
 
-    return strArray.join(' ');
+    return strArray.join(' ') + ' ago';
 }
 
 const srv = createServer((req, res) => {
