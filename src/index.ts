@@ -82,11 +82,13 @@ const srv = createServer((req, res) => {
     }
     res.setHeader('Content-Type', 'text/html');
     res.write(`<!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Query-Finder</title>
         <meta http-equiv="refresh" content="5">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
         <style>
             td.status-ok, .diff-2 {
                 color: green;
@@ -116,7 +118,7 @@ const srv = createServer((req, res) => {
             </tbody>
         </table>
         <br><br><br><br><br>
-        Page generated at: ${(new Date()).toISOString()}
+        <h4>Page generated at: ${(new Date()).toISOString()}</h4>
     </body>
 </html>`);
     res.end();
