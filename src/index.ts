@@ -63,7 +63,7 @@ class ElementNotFoundError extends Error { }
 
 function loadStatus() {
     function reviver(_key: any , value: any) {
-        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) {
+        if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,3}Z$/.test(value)) {
             return new Date(value);
         }
 
