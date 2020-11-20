@@ -29,6 +29,7 @@ interface Status {
     dateLastOutOfStock?: DateRange;
     curDateRange?: DateRange;
 }
+const ITEMS_MAP: { [key: string]: Item } = {};
 const LAST_STATUS_MAP: { [key: string]: Status } = {};
 
 const ONE_MINUTE = 60;
@@ -69,8 +70,9 @@ const srv = createServer((req, res) => {
     const htmlArray: string[] = [];
     for (const k of Object.keys(LAST_STATUS_MAP)) {
         const v = LAST_STATUS_MAP[k];
+        const i = ITEMS_MAP[k];
         htmlArray.push(`<tr>
-    <td scope="row">${k}</td>
+    <td scope="row"><a href="${i.browserUrl || i.url}" target="_blank">${k}</a></td>
     <td class="status-${v.type}">${v.text}</td>
     <td>${formatDate(v.date)}</td>
     <td>${formatDateRange(v.dateLastOutOfStock)}</td>
@@ -387,10 +389,15 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     return result;
 }
 
+function pti(item: Item) {
+    ITEMS_MAP[item.name] = item;
+    return item;
+}
+
 function makeBestBuyMatcher(name: string, desc: string, itemNumber: string): Item {
     const zipCode = 98052;
     const storeId = 498;
-    return {
+    return pti({
         name,
         url: `https://www.bestbuy.com/api/tcfb/model.json?paths=%5B%5B%22shop%22%2c%22buttonstate%22%2c%22v5%22%2c%22item%22%2c%22skus%22%2c${itemNumber}%2c%22conditions%22%2c%22NONE%22%2c%22destinationZipCode%22%2c${zipCode}%2c%22storeId%22%2c%20${storeId}%2c%22context%22%2c%22cyp%22%2c%22addAll%22%2c%22false%22%5D%5D&method=get`,
         browserUrl: `https://www.bestbuy.com/site/${desc}/${itemNumber}.p?skuId=${itemNumber}`,
@@ -402,11 +409,11 @@ function makeBestBuyMatcher(name: string, desc: string, itemNumber: string): Ite
         needH2: true,
         needProxy: false,
         //randomQueryParam: 'r',
-    };
+    });
 }
 
 function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item {
-    return {
+    return pti({
         name,
         url: `https://www.newegg.com/product/api/ProductRealtime?ItemNumber=${itemNumber}`,
         browserUrl: `https://www.newegg.com/${desc}/p/${itemNumber}?Item=${itemNumber}`,
@@ -418,11 +425,11 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
         needH2: false,
         needProxy: true,
         //randomQueryParam: 'r',
-    };
+    });
 }
 
 function makeNewEggSearchMatcher(name: string, itemNumber: string): Item {
-    return {
+    return pti({
         name,
         url: `https://www.newegg.com/p/pl?d=${itemNumber}`,
         dataType: 'text',
@@ -433,11 +440,11 @@ function makeNewEggSearchMatcher(name: string, itemNumber: string): Item {
         needH2: false,
         needProxy: true,
         //randomQueryParam: 'r',
-    };
+    });
 }
 
 function makeAMDMatcher(name: string, itemNumber: string): Item {
-    return {
+    return pti({
         name,
         url: `https://www.amd.com/en/direct-buy/${itemNumber}/us`,
         dataType: 'text',
@@ -448,11 +455,11 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
         needH2: true,
         needProxy: false,
         //randomQueryParam: 'r',
-    };
+    });
 }
 
 function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
-    return {
+    return pti({
         name,
         url: `https://www.amazon.com/${desc}/dp/${itemNumber}`,
         dataType: 'text',
@@ -462,11 +469,11 @@ function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item
         notifyOnResult: true,
         needH2: false,
         needProxy: true,
-    };
+    });
 }
 
 function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item {
-    return {
+    return pti({
         name,
         url: `https://store.steampowered.com/app/${itemNumber}/${desc}/`,
         dataType: 'text',
@@ -476,7 +483,7 @@ function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item 
         notifyOnResult: true,
         needH2: false,
         needProxy: false,
-    }
+    });
 }
 
 const BEST_BUY_5950X = '6438941';
