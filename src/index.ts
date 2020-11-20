@@ -367,7 +367,7 @@ const tgApi = new TG({
     token: process.env.TELEGRAM_ACCESS_TOKEN,
 });
 
-function typeToDateRange(curType: StatusType, curStatus: Status): DateRange {
+function typeToDateRange(curStatus: Status): DateRange {
     if (!curStatus.type) {
         return {};
     }
@@ -446,10 +446,10 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     }
     
     if (curStatus.type !== curType) {
-        typeToDateRange(curStatus.type, curStatus).end = curStatus.date;
+        typeToDateRange(curStatus).end = curStatus.date;
         
         curStatus.type = curType;
-        const useDateRange = typeToDateRange(curStatus.type, curStatus);
+        const useDateRange = typeToDateRange(curStatus);
         useDateRange.start = curStatus.date;
         useDateRange.end = undefined;
     }
