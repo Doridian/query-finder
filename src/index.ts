@@ -395,12 +395,14 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     let status = 'N/A';
     let result = false;
     let errored = false;
+    const curStatus: Status = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'error' };
+
     try {
         const matches = await checkItem(item);
         if (matches === item.notifyOnResult) {
             status = 'In stock';
             result = true;
-            if (allowNotify) {
+            if (allowNotify && curStatus.type === 'instock') {
                 console.log(`[${item.name}] FOUND! PING!`);
                 const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
                 // Do not await this!
@@ -429,7 +431,6 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         console.error(`[${item.name}] ${status}`);
     }
 
-    const curStatus: Status = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'error' };
     curStatus.text = status;
     curStatus.date = new Date();
     let curType: StatusType;
