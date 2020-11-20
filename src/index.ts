@@ -384,7 +384,7 @@ async function main() {
         testLoop(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST)),
         testLoop(makeAMDMatcher('AMD Test', AMD_TEST)),
         testLoop(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST)),
-        testLoop(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST)),
+        //testLoop(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST)),
         //testLoop(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST),
     ]);
 
@@ -393,7 +393,7 @@ async function main() {
         itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X)),
         itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X)),
         itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION)),
-        itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X)),
+        //itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X)),
         //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X)),
     ]);
 }
