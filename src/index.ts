@@ -458,10 +458,10 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
     });
 }
 
-function makeAmazonMatcher(name: string, desc: string, itemNumber: string): Item {
+function makeAmazonMatcher(name: string, itemNumber: string): Item {
     return pti({
         name,
-        url: `https://www.amazon.com/${desc}/dp/${itemNumber}`,
+        url: `https://www.amazon.com/dp/${itemNumber}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -489,10 +489,12 @@ function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item 
 const BEST_BUY_5950X = '6438941';
 const BEST_BUY_5950X_DESC = 'amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler';
 const BEST_BUY_TEST = '6247254';
+const BEST_BUY_TEST_DESC = 'insignia-32-class-led-hd-smart-fire-tv-edition-tv';
 
 const NEWEGG_5950X = 'N82E16819113663';
 const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
 const NEWEGG_TEST = 'N82E16820250109';
+const NEWEGG_TEST_DESC = 'western-digital-black-sn750-nvme-500gb';
 
 const NEWEGG_SEARCH_5950X = '5950x';
 const NEWEGG_SEARCH_TEST = '3800x';
@@ -501,7 +503,6 @@ const AMD_5950X = '5450881400';
 const AMD_TEST = '5335621300';
 
 const AMAZON_5950X = 'B0815Y8J9N';
-const AMAZON_5950X_DESC = 'abcdefg';
 const AMAZON_TEST = 'B07D998212';
 
 const STEAM_INDEX_BASE_STATION = '1059570';
@@ -531,12 +532,12 @@ async function itemLoop(item: Item) {
 
 async function main() {
     await Promise.all([
-        testLoop(makeBestBuyMatcher('BestBuy Test', 'X', BEST_BUY_TEST)),
-        testLoop(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST)),
+        testLoop(makeBestBuyMatcher('BestBuy Test', BEST_BUY_TEST_DESC, BEST_BUY_TEST)),
+        testLoop(makeNewEggMatcher('NewEgg Test', NEWEGG_TEST_DESC, NEWEGG_TEST)),
         testLoop(makeAMDMatcher('AMD Test', AMD_TEST)),
         testLoop(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST)),
         //testLoop(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST)),
-        //testLoop(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST),
+        //testLoop(makeAmazonMatcher('Amazon Test', AMAZON_TEST),
     ]);
 
     await Promise.all([
@@ -545,7 +546,7 @@ async function main() {
         itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X)),
         itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION)),
         //itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X)),
-        //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X)),
+        //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X)),
     ]);
 }
 
