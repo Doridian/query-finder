@@ -230,10 +230,12 @@ const tgApi = new TG({
 
 async function tryCheckItem(item: Item, allowNotify: boolean) {
     let status = 'N/A';
+    let result = false;
     try {
         const matches = await checkItem(item);
         if (matches === item.notifyOnResult) {
             status = 'In stock';
+            result = true;
             if (allowNotify) {
                 console.log(`[${item.name}] FOUND! PING!`);
                 const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
@@ -243,7 +245,6 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
                     text: notifyText,
                 });
             }
-            return true;
         } else {
             status = 'Out of stock';
             if (allowNotify) {
@@ -261,7 +262,7 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     }
     LAST_STATUS_MAP[item.name] = status;
     writeStatus();
-    return false;
+    return result;
 }
 
 function makeBestBuyMatcher(name: string, desc: string, itemNumber: string): Item {
