@@ -363,11 +363,12 @@ function getSleepTime(min: number, max: number) {
 async function testLoop(item: Item, throwError: boolean = true) {
     try {
         await testItem(item);
+        console.log(`[${item.name}] TEST OK!`);
     } catch (e) {
         if (throwError) {
             throw e;
         }
-        console.log(`[${item.name}] TEST ERROR!`);
+        console.error(`[${item.name}] TEST ERROR!`);
     }
     setTimeout(itemLoop, getSleepTime(minSleepTest, maxSleepTest), item, false);
 }
