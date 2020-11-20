@@ -60,7 +60,7 @@ const srv = createServer((req, res) => {
     for (const k of Object.keys(LAST_STATUS_MAP)) {
         const v = LAST_STATUS_MAP[k];
         htmlArray.push(`<tr>
-    <td>${k}</td>
+    <td scope="row">${k}</td>
     <td class="status-${v.type}">${v.text}</td>
     ${formatDate(v.date)}
     ${formatDate(v.dateLastOutOfStock)}
@@ -74,6 +74,7 @@ const srv = createServer((req, res) => {
     <head>
         <title>Query-Finder</title>
         <meta http-equiv="refresh" content="5">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             td.status-ok, td.diff-2 {
                 color: green;
@@ -84,23 +85,23 @@ const srv = createServer((req, res) => {
             td.status-error, td.diff-0 {
                 color: red;
             }
-            table {
-                border-collapse: separate;
-                border-spacing: 15px;
-            }
         </style>
     </head>
     <body>
-        <table>
-            <tr>
-                <td><b>Item</b></td>
-                <td><b>Status</b></td>
-                <td><b>Last check</b></td>
-                <td><b>Last OoS</b></td>
-                <td><b>Last Stock</b></td>
-                <td><b>Last Error</b></td>
-            </tr>
-            ${htmlArray.join('')}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Item</td>
+                    <th scope="col">Status</td>
+                    <th scope="col">Last check</td>
+                    <th scope="col">Last OoS</td>
+                    <th scope="col">Last Stock</td>
+                    <th scope="col">Last Error</td>
+                </tr>
+            </thead>
+            <tbody>
+                ${htmlArray.join('')}
+            </tbody>
         </table>
         <br><br><br><br><br>
         Page generated at: ${(new Date()).toISOString()}
