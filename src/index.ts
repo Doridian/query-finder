@@ -368,7 +368,7 @@ async function testLoop(item: Item, throwError: boolean = true) {
         if (throwError) {
             throw e;
         }
-        console.error(`[${item.name}] TEST ERROR!`);
+        console.error(`[${item.name}] TEST ERROR: ${e.stack || e.message || JSON.stringify(e)}`);
     }
     setTimeout(itemLoop, getSleepTime(minSleepTest, maxSleepTest), item, false);
 }
