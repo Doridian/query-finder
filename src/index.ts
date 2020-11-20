@@ -264,6 +264,21 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
     };
 }
 
+function makeNewEggSearchMatcher(name: string, itemNumber: string): Item {
+    return {
+        name,
+        url: `https://www.newegg.com/p/pl?d=${itemNumber}`,
+        dataType: 'text',
+        matcher: 'text_contains',
+        path: '',
+        value: 'Add to cart',
+        notifyOnResult: true,
+        needH2: false,
+        needProxy: true,
+        //randomQueryParam: 'r',
+    };
+}
+
 function makeAMDMatcher(name: string, itemNumber: string): Item {
     return {
         name,
@@ -315,6 +330,9 @@ const NEWEGG_5950X = 'N82E16819113663';
 const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
 const NEWEGG_TEST = 'N82E16824569006';
 
+const NEWEGG_SEARCH_5950X = '5950x';
+const NEWEGG_SEARCH_TEST = '3800x';
+
 const AMD_5950X = '5450881400';
 const AMD_TEST = '5335621300';
 
@@ -350,12 +368,14 @@ async function main() {
     await testItem(makeNewEggMatcher('NewEgg Test', 'X', NEWEGG_TEST));
     await testItem(makeAMDMatcher('AMD Test', AMD_TEST));
     await testItem(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST));
+    await testItem(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST));
     //await testItem(makeAmazonMatcher('Amazon Test', 'X', AMAZON_TEST));
 
     itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X));
     itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X));
     itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X));
     itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION));
+    itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X));
     //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X_DESC, AMAZON_5950X));
 }
 
