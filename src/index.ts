@@ -15,24 +15,34 @@ const inflateAsync = promisify(inflate);
 const brotliDecompressAsync = promisify(brotliDecompress);
 const gunzipAsync = promisify(gunzip);
 
+interface DateRange {
+    start?: Date;
+    end?: Date;
+}
+
 interface Status {
     text: string;
     type: 'ok' | 'warning' | 'error';
     date: Date;
-    dateLastStock?: Date;
-    dateLastError?: Date;
-    dateLastOutOfStock?: Date;
+    dateLastStock?: DateRange;
+    dateLastError?: DateRange;
+    dateLastOutOfStock?: DateRange;
+    curDateRange?: DateRange;
 }
 const LAST_STATUS_MAP: { [key: string]: Status } = {};
 
 const ONE_MINUTE = 60;
 const ONE_HOUR = 60 * ONE_MINUTE;
 const MAX_TIME_AGO = 24 * ONE_HOUR;
-function formatDate(date?: Date) {
-    if (!date) {
-        return '<td>-</td>';
+function formatDateRange(dateRange?: DateRange) {
+    if (!dateRange || !dateRange.start) {
+        return '<span>-</span>';
     }
 
+    return `${formatDate(dateRange.start)} - ${dateRange.end ? formatDate(dateRange.end) : '<span class="diff-0">Now</span>'}`;
+}
+
+function formatDate(date: Date) {
     let diff = Math.floor((Date.now() - date.getTime()) / 1000);
     if (diff > MAX_TIME_AGO) {
         return date.toISOString();
@@ -52,7 +62,7 @@ function formatDate(date?: Date) {
     }
     strArray.push(`${diff}s`);
 
-    return `<td class="diff-${diffOrders}">${strArray.join(' ')} ago</td>`;
+    return `<span class="diff-${diffOrders}">${strArray.join(' ')} ago</span>`;
 }
 
 const srv = createServer((req, res) => {
@@ -62,10 +72,10 @@ const srv = createServer((req, res) => {
         htmlArray.push(`<tr>
     <td scope="row">${k}</td>
     <td class="status-${v.type}">${v.text}</td>
-    ${formatDate(v.date)}
-    ${formatDate(v.dateLastOutOfStock)}
-    ${formatDate(v.dateLastStock)}
-    ${formatDate(v.dateLastError)}
+    <td>${formatDate(v.date)}</td>
+    <td>${formatDateRange(v.dateLastOutOfStock)}</td>
+    <td>${formatDateRange(v.dateLastStock)}</td>
+    <td>${formatDateRange(v.dateLastError)}</td>
 </tr>`);
     }
     res.setHeader('Content-Type', 'text/html');
@@ -76,13 +86,13 @@ const srv = createServer((req, res) => {
         <meta http-equiv="refresh" content="5">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
-            td.status-ok, td.diff-2 {
+            td.status-ok, .diff-2 {
                 color: green;
             }
-            td.status-warning, td.diff-1 {
+            td.status-warning, .diff-1 {
                 color: orange;
             }
-            td.status-error, td.diff-0 {
+            td.status-error, .diff-0 {
                 color: red;
             }
         </style>
@@ -343,17 +353,34 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'ok' };
     curStatus.text = status;
     curStatus.date = new Date();
+    let useDateRange: DateRange | undefined;
     if (result) {
         curStatus.type = 'ok';
-        curStatus.dateLastStock = curStatus.date;
+        useDateRange = curStatus.dateLastStock;
     } else if (errored) {
         curStatus.type = 'error';
-        curStatus.dateLastError = curStatus.date;
+        useDateRange = curStatus.dateLastError;
     } else {
         curStatus.type = 'warning';
-        curStatus.dateLastOutOfStock = curStatus.date;
+        useDateRange = curStatus.dateLastOutOfStock;
     }
     LAST_STATUS_MAP[item.name] = curStatus;
+
+    if (!useDateRange) {
+        useDateRange = {};
+    }
+
+    if (curStatus.curDateRange) {
+        if (curStatus.curDateRange !== useDateRange) {
+            curStatus.curDateRange.end = curStatus.date;
+            curStatus.curDateRange = useDateRange;
+            useDateRange.start = curStatus.date;
+            useDateRange.end = undefined;
+        }
+    } else {
+        useDateRange.start = curStatus.date;
+        useDateRange.end = undefined;
+    }
 
     return result;
 }
