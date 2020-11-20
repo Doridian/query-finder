@@ -375,14 +375,11 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     }
     LAST_STATUS_MAP[item.name] = curStatus;
 
-    if (curStatus.curDateRange) {
-        if (curStatus.curDateRange !== useDateRange) {
+    if (!curStatus.curDateRange || curStatus.curDateRange !== useDateRange) {
+        if (curStatus.curDateRange) {
             curStatus.curDateRange.end = curStatus.date;
-            curStatus.curDateRange = useDateRange;
-            useDateRange.start = curStatus.date;
-            useDateRange.end = undefined;
         }
-    } else {
+        curStatus.curDateRange = useDateRange;
         useDateRange.start = curStatus.date;
         useDateRange.end = undefined;
     }
