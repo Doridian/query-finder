@@ -29,7 +29,7 @@ const ONE_HOUR = 60 * ONE_MINUTE;
 const MAX_TIME_AGO = 24 * ONE_HOUR;
 function formatDate(date?: Date) {
     if (!date) {
-        return 'N/A';
+        return '-';
     }
 
     let diff = Math.floor((Date.now() - date.getTime()) / 1000);
