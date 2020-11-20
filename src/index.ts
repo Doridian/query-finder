@@ -163,10 +163,10 @@ const srv = createServer((_req, res) => {
             .diff-3 {
                 color: blue;
             }
-            td.status-ok, .diff-2 {
+            td.status-instock, .diff-2 {
                 color: green;
             }
-            td.status-warning, .diff-1 {
+            td.status-outofstock, .diff-1 {
                 color: orange;
             }
             td.status-error, .diff-0 {
