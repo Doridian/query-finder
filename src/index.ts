@@ -17,6 +17,7 @@ const gunzipAsync = promisify(gunzip);
 
 interface Status {
     text: string;
+    type: 'ok' | 'warning' | 'error';
     date: Date;
     dateLastStock?: Date;
     dateLastError?: Date;
@@ -57,7 +58,7 @@ const srv = createServer((req, res) => {
         const v = LAST_STATUS_MAP[k];
         htmlArray.push(`<tr>
     <td>${k}</td>
-    <td>${v.text}</td>
+    <td class="status-${v.type}">${v.text}</td>
     <td>${formatDate(v.date)}</td>
     <td>${formatDate(v.dateLastOutOfStock)}</td>
     <td>${formatDate(v.dateLastStock)}</td>
@@ -69,6 +70,17 @@ const srv = createServer((req, res) => {
 <html>
     <head>
         <title>Query-Finder</title>
+        <style>
+            td.status-ok {
+                color: green;
+            }
+            td.status-warning {
+                color: orange;
+            }
+            td.status-error {
+                color: red;
+            }
+        </style>
     </head>
     <body>
         <table>
@@ -314,14 +326,17 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         console.error(`[${item.name}] ${status}`);
     }
 
-    const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '' };
+    const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'ok' };
     curStatus.text = status;
     curStatus.date = new Date();
     if (result) {
+        curStatus.type = 'ok';
         curStatus.dateLastStock = curStatus.date;
     } else if (errored) {
+        curStatus.type = 'error';
         curStatus.dateLastError = curStatus.date;
     } else {
+        curStatus.type = 'warning';
         curStatus.dateLastOutOfStock = curStatus.date;
     }
     LAST_STATUS_MAP[item.name] = curStatus;
