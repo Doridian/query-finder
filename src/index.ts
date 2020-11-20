@@ -16,7 +16,7 @@ const brotliDecompressAsync = promisify(brotliDecompress);
 const gunzipAsync = promisify(gunzip);
 
 class HttpError extends Error {
-    constructor(code: number, public body: string) {
+    constructor(public code: number, public body: string) {
         super(`HTTP Code: ${code}`);
     }
 }
@@ -225,7 +225,11 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
             console.log(`[${item.name}] NOT FOUND!`);
         }
     } catch(e) {
-        console.error(`[${item.name}] ERROR: ${e.stack || e.message || JSON.stringify(e)}`);
+        if (e instanceof HttpError) {
+            console.error(`[${item.name}] ERROR: HTTP code ${e.code}`);
+        } else {
+            console.error(`[${item.name}] ERROR: ${e.stack || e.message || JSON.stringify(e)}`);
+        }
     }
     return false;
 }
