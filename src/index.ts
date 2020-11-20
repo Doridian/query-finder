@@ -342,11 +342,9 @@ async function checkItem(item: Item) {
 
     const result = matcher(data, item.path, item.value);
 
-    if (result) {
-        writeFile(`last/${item.name}.instock.${item.dataType}`, dataStr, (err) => {
-            if (err) console.error(err);
-        });
-    }
+    writeFile(`last/${item.name}.${result}.${item.dataType}`, dataStr, (err) => {
+        if (err) console.error(err);
+    });
 
     return result;
 }
