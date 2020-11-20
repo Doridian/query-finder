@@ -70,6 +70,7 @@ const srv = createServer((req, res) => {
 <html>
     <head>
         <title>Query-Finder</title>
+        <meta http-equiv="refresh" content="5">
         <style>
             td.status-ok {
                 color: green;
