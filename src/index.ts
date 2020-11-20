@@ -65,7 +65,9 @@ function loadStatus() {
     let _status: { [key: string]: Status } = {};
     try {
         _status = JSON.parse(readFileSync('./last/_status.json', 'utf8'));
-    } catch { }
+    } catch (e) {
+        console.error(e);
+    }
     return _status;
 }
 const LAST_STATUS_MAP: { [key: string]: Status } = loadStatus();
