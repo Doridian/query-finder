@@ -210,9 +210,8 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     try {
         const matches = await checkItem(item);
         if (matches === item.notifyOnResult) {
-            console.log(`[${item.name}] FOUND!`);
             if (allowNotify) {
-                console.log(`[${item.name}] PING!`);
+                console.log(`[${item.name}] FOUND! PING!`);
                 const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
                 await tgApi.sendMessage({
                     chat_id: tgChatId,
@@ -221,14 +220,14 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
                 });
             }
             return true;
-        } else {
+        } else if (allowNotify) {
             console.log(`[${item.name}] NOT FOUND!`);
         }
     } catch(e) {
         if (e instanceof HttpError) {
-            console.error(`[${item.name}] ERROR: HTTP code ${e.code}`);
+            console.error(`[${item.name}] HTTP Error: ${e.code}`);
         } else {
-            console.error(`[${item.name}] ERROR: ${e.stack || e.message || JSON.stringify(e)}`);
+            console.error(`[${item.name}] Exception: ${e.stack || e.message || JSON.stringify(e)}`);
         }
     }
     return false;
@@ -349,13 +348,6 @@ const STEAM_INDEX_BASE_STATION_DESC = 'Valve_Index_Base_Station';
 const STEAM_TEST = '1072820';
 const STEAM_TEST_DESC = 'Face_Gasket_for_Valve_Index_Headset__2_Pack';
 
-
-async function testItem(item: Item) {
-    if (!await tryCheckItem(item, false)) {
-        throw new Error('Test item NOT FOUND!');
-    }
-}
-
 const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
 const maxSleep = parseInt(process.env.PAGE_SLEEP_MAX!, 10);
 const minSleepTest = parseInt(process.env.TEST_SLEEP_MIN!, 10);
@@ -364,17 +356,11 @@ function getSleepTime(min: number, max: number) {
     return min + (Math.random() * (max - min));
 }
 
-async function testLoop(item: Item, throwError: boolean = true) {
-    try {
-        await testItem(item);
+async function testLoop(item: Item) {
+    if (await tryCheckItem(item, false)) {
         console.log(`[${item.name}] TEST OK!`);
-    } catch (e) {
-        if (throwError) {
-            throw e;
-        }
-        console.error(`[${item.name}] TEST ERROR: ${e.stack || e.message || JSON.stringify(e)}`);
     }
-    setTimeout(testLoop, getSleepTime(minSleepTest, maxSleepTest), item, false);
+    setTimeout(testLoop, getSleepTime(minSleepTest, maxSleepTest), item);
 }
 
 async function itemLoop(item: Item) {
