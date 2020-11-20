@@ -9,6 +9,7 @@ import { inflate, brotliDecompress, gunzip } from 'zlib';
 import { promisify } from 'util';
 import { writeFile, readFileSync } from 'fs';
 import { load } from 'dotenv/types';
+import { type } from 'os';
 const { request: h2request } = require('http2-client');
 const TG = require('telegram-bot-api');
 
@@ -21,14 +22,14 @@ interface DateRange {
     end?: Date;
 }
 
+type StatusType = 'instock' | 'warning' | 'error';
 interface Status {
     text: string;
-    type: 'ok' | 'warning' | 'error';
+    type: StatusType;
     date: Date;
     dateLastStock?: DateRange;
     dateLastError?: DateRange;
     dateLastOutOfStock?: DateRange;
-    curDateRange?: DateRange;
 }
 
 interface ItemUrl {
@@ -366,6 +367,30 @@ const tgApi = new TG({
     token: process.env.TELEGRAM_ACCESS_TOKEN,
 });
 
+function typeToDateRange(curType: StatusType, curStatus: Status): DateRange {
+    if (!curStatus.type) {
+        return {};
+    }
+
+    switch (curStatus.type) { 
+        case 'instock':
+            if (!curStatus.dateLastStock) {
+                curStatus.dateLastStock = {};
+            }
+            return curStatus.dateLastStock;
+        case 'warning':
+            if (!curStatus.dateLastOutOfStock) {
+                curStatus.dateLastOutOfStock = {};
+            }
+            return curStatus.dateLastOutOfStock;
+        case 'error':
+            if (!curStatus.dateLastError) {
+                curStatus.dateLastError = {};
+            }
+            return curStatus.dateLastError;
+    }
+}
+
 async function tryCheckItem(item: Item, allowNotify: boolean) {
     let status = 'N/A';
     let result = false;
@@ -404,40 +429,29 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
         console.error(`[${item.name}] ${status}`);
     }
 
-    const curStatus = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'ok' };
+    const curStatus: Status = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'error' };
     curStatus.text = status;
     curStatus.date = new Date();
-    let useDateRange: DateRange;
+    let curType: StatusType;
     if (result) {
-        curStatus.type = 'ok';
-        if (!curStatus.dateLastStock) {
-            curStatus.dateLastStock = {};
-        }
-        useDateRange = curStatus.dateLastStock;
+        curType = 'instock';
     } else if (errored) {
-        curStatus.type = 'error';
-        if (!curStatus.dateLastError) {
-            curStatus.dateLastError = {};
-        }
-        useDateRange = curStatus.dateLastError;
+        curType = 'error';
     } else {
-        curStatus.type = 'warning';
-        if (!curStatus.dateLastOutOfStock) {
-            curStatus.dateLastOutOfStock = {};
-        }
-        useDateRange = curStatus.dateLastOutOfStock;
+        curType = 'warning';
     }
-    LAST_STATUS_MAP[item.name] = curStatus;
-
-    if (!curStatus.curDateRange || curStatus.curDateRange !== useDateRange) {
-        if (curStatus.curDateRange) {
-            curStatus.curDateRange.end = curStatus.date;
-        }
-        curStatus.curDateRange = useDateRange;
+    
+    if (curStatus.type !== curType) {
+        typeToDateRange(curStatus.type, curStatus).end = curStatus.date;
+        
+        curStatus.type = curType;
+        const useDateRange = typeToDateRange(curStatus.type, curStatus);
         useDateRange.start = curStatus.date;
         useDateRange.end = undefined;
     }
 
+    LAST_STATUS_MAP[item.name] = curStatus;
+    
     writeStatus();
 
     return result;
