@@ -30,7 +30,7 @@ const ONE_HOUR = 60 * ONE_MINUTE;
 const MAX_TIME_AGO = 24 * ONE_HOUR;
 function formatDate(date?: Date) {
     if (!date) {
-        return '-';
+        return '<td>-</td>';
     }
 
     let diff = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -39,17 +39,20 @@ function formatDate(date?: Date) {
     }
 
     let strArray: string[] = [];
+    let diffOrders = 0;
     if (diff >= ONE_HOUR) {
         strArray.push(`${Math.floor(diff / ONE_HOUR)}h`);
         diff %= ONE_HOUR;
+        diffOrders++;
     }
     if (diff >= ONE_MINUTE) {
         strArray.push(`${Math.floor(diff / ONE_MINUTE)}m`);
         diff %= ONE_MINUTE;
+        diffOrders++;
     }
     strArray.push(`${diff}s`);
 
-    return strArray.join(' ') + ' ago';
+    return `<td class="diff-${diffOrders}">${strArray.join(' ')} ago</td>`;
 }
 
 const srv = createServer((req, res) => {
@@ -59,10 +62,10 @@ const srv = createServer((req, res) => {
         htmlArray.push(`<tr>
     <td>${k}</td>
     <td class="status-${v.type}">${v.text}</td>
-    <td>${formatDate(v.date)}</td>
-    <td>${formatDate(v.dateLastOutOfStock)}</td>
-    <td>${formatDate(v.dateLastStock)}</td>
-    <td>${formatDate(v.dateLastError)}</td>
+    ${formatDate(v.date)}
+    ${formatDate(v.dateLastOutOfStock)}
+    ${formatDate(v.dateLastStock)}
+    ${formatDate(v.dateLastError)}
 </tr>`);
     }
     res.setHeader('Content-Type', 'text/html');
@@ -72,13 +75,13 @@ const srv = createServer((req, res) => {
         <title>Query-Finder</title>
         <meta http-equiv="refresh" content="5">
         <style>
-            td.status-ok {
+            td.status-ok, td.diff-2 {
                 color: green;
             }
-            td.status-warning {
+            td.status-warning, td.diff-1 {
                 color: orange;
             }
-            td.status-error {
+            td.status-error, td.diff-0 {
                 color: red;
             }
         </style>
