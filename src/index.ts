@@ -560,11 +560,15 @@ function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item 
 
 const BEST_BUY_5950X = '6438941';
 const BEST_BUY_5950X_DESC = 'amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler';
+const BEST_BUY_3090 = '6436192';
+const BEST_BUY_3090_DESC = 'evga-geforce-rtx-3090-ftw3-ultra-gaming-24gb-gddr6x-pci-express-4-0-graphics-card';
 const BEST_BUY_TEST = '6247254';
 const BEST_BUY_TEST_DESC = 'insignia-32-class-led-hd-smart-fire-tv-edition-tv';
 
 const NEWEGG_5950X = 'N82E16819113663';
 const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
+const NEWEGG_3090 = 'N82E16814487526';
+const NEWEGG_3090_DESC = 'evga-geforce-rtx-3090-24g-p5-3987-kr';
 const NEWEGG_TEST = 'N82E16820250109';
 const NEWEGG_TEST_DESC = 'western-digital-black-sn750-nvme-500gb';
 
@@ -614,7 +618,9 @@ async function main() {
 
     await Promise.all([
         itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X)),
+        itemLoop(makeBestBuyMatcher('BestBuy 3090', BEST_BUY_3090_DESC, BEST_BUY_3090)),
         itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X)),
+        itemLoop(makeNewEggMatcher('NewEgg 3090', NEWEGG_3090_DESC, NEWEGG_3090)),
         itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X)),
         itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION)),
         //itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X)),
