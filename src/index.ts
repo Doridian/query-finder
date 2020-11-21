@@ -461,34 +461,41 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     return result;
 }
 
-function pti(item: Item) {
-    ITEMS_MAP[item.name] = item;
-    return item;
+interface MatcherBaseConfig {
+    type: string;
+    name: string;
+    sku: string;
+    enabled: boolean;
 }
+interface MatcherWithDescConfig extends MatcherBaseConfig {
+    desc: string;
+}
+type MatcherFunc = (config: MatcherBaseConfig) => Item;
+const MATCHER_TYPES: { [key: string]: MatcherFunc } = {};
 
-function makeBestBuyMatcher(name: string, desc: string, itemNumber: string): Item {
-    const zipCode = 98052;
-    const storeId = 498;
-    return pti({
-        name,
-        url: `https://www.bestbuy.com/api/tcfb/model.json?paths=%5B%5B%22shop%22%2c%22buttonstate%22%2c%22v5%22%2c%22item%22%2c%22skus%22%2c${itemNumber}%2c%22conditions%22%2c%22NONE%22%2c%22destinationZipCode%22%2c${zipCode}%2c%22storeId%22%2c%20${storeId}%2c%22context%22%2c%22cyp%22%2c%22addAll%22%2c%22false%22%5D%5D&method=get`,
-        browserUrl: `https://www.bestbuy.com/site/${desc}/${itemNumber}.p?skuId=${itemNumber}`,
+const BESTBUY_ZIP = 98052;
+const BESTBUY_STORE = 498;
+MATCHER_TYPES.bestbuy = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://www.bestbuy.com/api/tcfb/model.json?paths=%5B%5B%22shop%22%2c%22buttonstate%22%2c%22v5%22%2c%22item%22%2c%22skus%22%2c${cfg.sku}%2c%22conditions%22%2c%22NONE%22%2c%22destinationZipCode%22%2c${BESTBUY_ZIP}%2c%22storeId%22%2c%20${BESTBUY_STORE}%2c%22context%22%2c%22cyp%22%2c%22addAll%22%2c%22false%22%5D%5D&method=get`,
+        browserUrl: `https://www.bestbuy.com/site/${(cfg as MatcherWithDescConfig).desc}/${cfg.sku}.p?skuId=${cfg.sku}`,
         dataType: 'json',
         matcher: 'object',
-        path: `jsonGraph.shop.buttonstate.v5.item.skus.${itemNumber}.conditions.NONE.destinationZipCode.${zipCode}.storeId.${storeId}.context.cyp.addAll.false.value.buttonStateResponseInfos.0.buttonState`,
+        path: `jsonGraph.shop.buttonstate.v5.item.skus.${cfg.sku}.conditions.NONE.destinationZipCode.${BESTBUY_ZIP}.storeId.${BESTBUY_STORE}.context.cyp.addAll.false.value.buttonStateResponseInfos.0.buttonState`,
         value: 'SOLD_OUT',
         notifyOnResult: false,
         needH2: true,
         needProxy: false,
         //randomQueryParam: 'r',
-    });
-}
+    };
+};
 
-function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item {
-    return pti({
-        name,
-        url: `https://www.newegg.com/product/api/ProductRealtime?ItemNumber=${itemNumber}`,
-        browserUrl: `https://www.newegg.com/${desc}/p/${itemNumber}?Item=${itemNumber}`,
+MATCHER_TYPES.newegg = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://www.newegg.com/product/api/ProductRealtime?ItemNumber=${cfg.sku}`,
+        browserUrl: `https://www.newegg.com/${(cfg as MatcherWithDescConfig).desc}/p/${cfg.sku}?Item=${cfg.sku}`,
         dataType: 'json',
         matcher: 'object',
         path: 'MainItem.Instock',
@@ -497,13 +504,13 @@ function makeNewEggMatcher(name: string, desc: string, itemNumber: string): Item
         needH2: false,
         needProxy: true,
         //randomQueryParam: 'r',
-    });
-}
+    };
+};
 
-function makeNewEggSearchMatcher(name: string, itemNumber: string): Item {
-    return pti({
-        name,
-        url: `https://www.newegg.com/p/pl?d=${itemNumber}`,
+MATCHER_TYPES.newegg_search = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://www.newegg.com/p/pl?d=${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -512,13 +519,13 @@ function makeNewEggSearchMatcher(name: string, itemNumber: string): Item {
         needH2: false,
         needProxy: true,
         //randomQueryParam: 'r',
-    });
-}
+    };
+};
 
-function makeAMDMatcher(name: string, itemNumber: string): Item {
-    return pti({
-        name,
-        url: `https://www.amd.com/en/direct-buy/${itemNumber}/us`,
+MATCHER_TYPES.amd = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://www.amd.com/en/direct-buy/${cfg.sku}/us`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -527,13 +534,13 @@ function makeAMDMatcher(name: string, itemNumber: string): Item {
         needH2: true,
         needProxy: false,
         //randomQueryParam: 'r',
-    });
-}
+    };
+};
 
-function makeAmazonMatcher(name: string, itemNumber: string): Item {
-    return pti({
-        name,
-        url: `https://www.amazon.com/dp/${itemNumber}`,
+MATCHER_TYPES.amazon = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://www.amazon.com/dp/${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -541,13 +548,13 @@ function makeAmazonMatcher(name: string, itemNumber: string): Item {
         notifyOnResult: true,
         needH2: false,
         needProxy: true,
-    });
-}
+    };
+};
 
-function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item {
-    return pti({
-        name,
-        url: `https://store.steampowered.com/app/${itemNumber}/${desc}/`,
+MATCHER_TYPES.steam = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://store.steampowered.com/app/${cfg.sku}/${(cfg as MatcherWithDescConfig).desc}/`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -555,36 +562,8 @@ function makeSteamWatcher(name: string, desc: string, itemNumber: string): Item 
         notifyOnResult: true,
         needH2: false,
         needProxy: false,
-    });
-}
-
-const BEST_BUY_5950X = '6438941';
-const BEST_BUY_5950X_DESC = 'amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler';
-const BEST_BUY_3090 = '6436192';
-const BEST_BUY_3090_DESC = 'evga-geforce-rtx-3090-ftw3-ultra-gaming-24gb-gddr6x-pci-express-4-0-graphics-card';
-const BEST_BUY_TEST = '6247254';
-const BEST_BUY_TEST_DESC = 'insignia-32-class-led-hd-smart-fire-tv-edition-tv';
-
-const NEWEGG_5950X = 'N82E16819113663';
-const NEWEGG_5950X_DESC = 'amd-ryzen-9-5950x';
-const NEWEGG_3090 = 'N82E16814487526';
-const NEWEGG_3090_DESC = 'evga-geforce-rtx-3090-24g-p5-3987-kr';
-const NEWEGG_TEST = 'N82E16820250109';
-const NEWEGG_TEST_DESC = 'western-digital-black-sn750-nvme-500gb';
-
-const NEWEGG_SEARCH_5950X = '5950x';
-const NEWEGG_SEARCH_TEST = '3800x';
-
-const AMD_5950X = '5450881400';
-const AMD_TEST = '5335621300';
-
-const AMAZON_5950X = 'B0815Y8J9N';
-const AMAZON_TEST = 'B07D998212';
-
-const STEAM_INDEX_BASE_STATION = '1059570';
-const STEAM_INDEX_BASE_STATION_DESC = 'Valve_Index_Base_Station';
-const STEAM_TEST = '1072820';
-const STEAM_TEST_DESC = 'Face_Gasket_for_Valve_Index_Headset__2_Pack';
+    };
+};
 
 const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
 const maxSleep = parseInt(process.env.PAGE_SLEEP_MAX!, 10);
@@ -606,26 +585,35 @@ async function itemLoop(item: Item) {
     setTimeout(itemLoop, getSleepTime(minSleep, maxSleep), item);
 }
 
-async function main() {
-    await Promise.all([
-        testLoop(makeBestBuyMatcher('BestBuy Test', BEST_BUY_TEST_DESC, BEST_BUY_TEST)),
-        testLoop(makeNewEggMatcher('NewEgg Test', NEWEGG_TEST_DESC, NEWEGG_TEST)),
-        testLoop(makeAMDMatcher('AMD Test', AMD_TEST)),
-        testLoop(makeSteamWatcher('Steam Test', STEAM_TEST_DESC, STEAM_TEST)),
-        //testLoop(makeNewEggSearchMatcher('NewEgg Search Test', NEWEGG_SEARCH_TEST)),
-        //testLoop(makeAmazonMatcher('Amazon Test', AMAZON_TEST),
-    ]);
+function loadMatchers(file: string) {
+    const data = JSON.parse(readFileSync(file, 'utf8')) as MatcherBaseConfig[];
+    const matchers: Item[] = [];
+    for (const d of data) {
+        if (!d.enabled) {
+            continue;
+        }
+        const m = MATCHER_TYPES[d.type];
+        if (!m) {
+            console.error(`Unknown matcher type ${d.type}. Ignoring.`);
+            continue;
+        }
+        const i = m(d);
+        if (ITEMS_MAP[i.name]) {
+            console.error(`Duplicate item name ${i.name}. Ignoring.`);
+            continue;
+        }
+        ITEMS_MAP[i.name] = i;
+        matchers.push(i);
+    }
+    return matchers;
+}
 
-    await Promise.all([
-        itemLoop(makeBestBuyMatcher('BestBuy 5950x', BEST_BUY_5950X_DESC, BEST_BUY_5950X)),
-        itemLoop(makeBestBuyMatcher('BestBuy 3090', BEST_BUY_3090_DESC, BEST_BUY_3090)),
-        itemLoop(makeNewEggMatcher('NewEgg 5950x', NEWEGG_5950X_DESC, NEWEGG_5950X)),
-        itemLoop(makeNewEggMatcher('NewEgg 3090', NEWEGG_3090_DESC, NEWEGG_3090)),
-        itemLoop(makeAMDMatcher('AMD 5950x', AMD_5950X)),
-        itemLoop(makeSteamWatcher('Steam Index Base Station', STEAM_INDEX_BASE_STATION_DESC, STEAM_INDEX_BASE_STATION)),
-        //itemLoop(makeNewEggSearchMatcher('NewEgg Search 5950x', NEWEGG_SEARCH_5950X)),
-        //itemLoop(makeAmazonMatcher('Amazon 5950x', AMAZON_5950X)),
-    ]);
+async function main() {
+    const tests = loadMatchers('testmatchers.json');
+    const matchers = loadMatchers('matchers.json');
+
+    await Promise.all(tests.map(t => testLoop(t)));
+    await Promise.all(matchers.map(m => itemLoop(m)));
 }
 
 main()

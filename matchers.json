@@ -1,0 +1,55 @@
+[
+    {
+        "type": "newegg",
+        "name": "NewEgg 5950x",
+        "sku": "N82E16819113663",
+        "desc": "amd-ryzen-9-5950x",
+        "enabled": true
+    },
+    {
+        "type": "newegg",
+        "name": "NewEgg 3090",
+        "sku": "N82E16814487526",
+        "desc": "evga-geforce-rtx-3090-24g-p5-3987-kr",
+        "enabled": true
+    },
+    {
+        "type": "bestbuy",
+        "name": "BestBuy 5950x",
+        "sku": "6438941",
+        "desc": "amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler",
+        "enabled": true
+    },
+    {
+        "type": "bestbuy",
+        "name": "BestBuy 3090",
+        "sku": "6436192",
+        "desc": "evga-geforce-rtx-3090-ftw3-ultra-gaming-24gb-gddr6x-pci-express-4-0-graphics-card",
+        "enabled": true
+    },
+    {
+        "type": "amd",
+        "name": "AMD 5950x",
+        "sku": "5450881400",
+        "enabled": true
+    },
+    {
+        "type": "steam",
+        "name": "Steam Index Base Station",
+        "sku": "1059570",
+        "desc": "Valve_Index_Base_Station",
+        "enabled": true
+    },
+    {
+        "type": "newegg_search",
+        "name": "NewEgg Search 5950x",
+        "sku": "5950x",
+        "enabled": false
+    },
+    {
+        "type": "amazon",
+        "name": "Amazon 5950x",
+        "sku": "B0815Y8J9N",
+        "enabled": false
+    }
+]

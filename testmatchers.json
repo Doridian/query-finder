@@ -1,0 +1,41 @@
+[
+    {
+        "type": "newegg",
+        "name": "NewEgg Test",
+        "sku": "N82E16820250109",
+        "desc": "western-digital-black-sn750-nvme-500gb",
+        "enabled": true
+    },
+    {
+        "type": "bestbuy",
+        "name": "BestBuy Test",
+        "sku": "6247254",
+        "desc": "insignia-32-class-led-hd-smart-fire-tv-edition-tv",
+        "enabled": true
+    },
+    {
+        "type": "amd",
+        "name": "AMD Test",
+        "sku": "5335621300",
+        "enabled": true
+    },
+    {
+        "type": "steam",
+        "name": "Steam Test",
+        "sku": "1072820",
+        "desc": "Face_Gasket_for_Valve_Index_Headset__2_Pack",
+        "enabled": true
+    },
+    {
+        "type": "newegg_search",
+        "name": "NewEgg Search Test",
+        "sku": "3800x",
+        "enabled": false
+    },
+    {
+        "type": "amazon",
+        "name": "Amazon Test",
+        "sku": "B07D998212",
+        "enabled": false
+    }
+]
