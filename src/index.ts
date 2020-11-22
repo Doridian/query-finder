@@ -45,6 +45,7 @@ interface Item extends ItemUrl {
     path: string;
     value: string | number | boolean;
     notifyOnResult: boolean;
+    testmode?: boolean;
 }
 
 interface MyResponse {
@@ -130,8 +131,9 @@ function formatDate(date: Date) {
     return `<span class="diff-${diffOrders}">${strArray.join(' ')} ago</span>`;
 }
 
-const srv = createServer((_req, res) => {
+function generateTable(filter: (i: Item) => boolean) {
     const htmlArray: string[] = [];
+
     for (const k of Object.keys(LAST_STATUS_MAP)) {
         const v = LAST_STATUS_MAP[k];
         const i = ITEMS_MAP[k];
@@ -139,6 +141,9 @@ const srv = createServer((_req, res) => {
             if (FULLY_INITED) {
                 delete LAST_STATUS_MAP[k];
             }
+            continue;
+        }
+        if (!filter(i)) {
             continue;
         }
         htmlArray.push(`<tr>
@@ -150,6 +155,14 @@ const srv = createServer((_req, res) => {
     <td>${formatDateRange(v.dateLastError)}</td>
 </tr>`);
     }
+
+    return htmlArray;
+}
+
+const srv = createServer((_req, res) => {
+    const tableTests = generateTable(i => i.testmode!);
+    const tableItems = generateTable(i => !i.testmode!);
+
     res.setHeader('Content-Type', 'text/html');
     res.write(`<!DOCTYPE html>
 <html lang="en">
@@ -176,6 +189,7 @@ const srv = createServer((_req, res) => {
     </head>
     <body>
         <div class="container-fluid">
+            <h2>Items</h2>
             <table class="table">
                 <thead>
                     <tr>
@@ -188,9 +202,25 @@ const srv = createServer((_req, res) => {
                     </tr>
                 </thead>
                 <tbody>
-                    ${htmlArray.join('')}
+                    ${tableItems.join('')}
                 </tbody>
-            </table>        
+            </table>
+            <h2>Tests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</td>
+                        <th scope="col">Status</td>
+                        <th scope="col">Last check</td>
+                        <th scope="col">Last OoS</td>
+                        <th scope="col">Last Stock</td>
+                        <th scope="col">Last Error</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableTests.join('')}
+                </tbody>
+            </table>
             <div class="alert alert-info" role="alert">
                 Page generated at: ${(new Date()).toISOString()}
             </div>
@@ -611,6 +641,9 @@ function loadMatchers(file: string) {
 async function main() {
     const tests = loadMatchers('testmatchers.json');
     const matchers = loadMatchers('matchers.json');
+
+    tests.forEach(t => { t.testmode = true });
+    matchers.forEach(m => { m.testmode = false });
 
     await Promise.all(tests.map(t => testLoop(t)));
     await Promise.all(matchers.map(m => itemLoop(m)));
