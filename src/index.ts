@@ -131,7 +131,7 @@ function formatDate(date: Date) {
     return `<span class="diff-${diffOrders}">${strArray.join(' ')} ago</span>`;
 }
 
-function generateTable(filter: (i: Item) => boolean) {
+function generateTable(filter: (i: Item, v: Status) => boolean) {
     const htmlArray: string[] = [];
 
     for (const k of Object.keys(LAST_STATUS_MAP)) {
@@ -143,7 +143,7 @@ function generateTable(filter: (i: Item) => boolean) {
             }
             continue;
         }
-        if (!filter(i)) {
+        if (!filter(i, v)) {
             continue;
         }
         htmlArray.push(`<tr>
