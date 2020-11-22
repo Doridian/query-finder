@@ -18,7 +18,7 @@
         "name": "NewEgg 3090 Strix",
         "sku": "N82E16814126456",
         "desc": "asus-geforce-rtx-3090-rog-strix-rtx3090-o24g-gaming",
-        "enabled": true
+        "enabled": false
     },
     {
         "type": "bestbuy",
@@ -39,7 +39,7 @@
         "name": "BestBuy 3090 Strix",
         "sku": "6432447",
         "desc": "asus-geforce-rtx-3090-24gb-gddr6x-pci-express-4-0-strix-graphics-card-black",
-        "enabled": true
+        "enabled": false
     },    
     {
         "type": "amd",
