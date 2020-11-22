@@ -36,6 +36,6 @@
         "type": "amazon",
         "name": "Amazon Test",
         "sku": "B07D998212",
-        "enabled": true
+        "enabled": false
     }
 ]
