@@ -64,6 +64,12 @@
         "type": "amazon",
         "name": "Amazon 5950x",
         "sku": "B0815Y8J9N",
-        "enabled": false
+        "enabled": true
+    },
+    {
+        "type": "amazon",
+        "name": "Amazon 3090 FTW3",
+        "sku": "B08J5F3G18",
+        "enabled": true
     }
 ]
