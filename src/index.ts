@@ -44,6 +44,7 @@ interface Item extends ItemUrl {
     matcher: 'object' | 'dom_text_contains' | 'text_contains';
     path: string;
     value: string | number | boolean;
+    errorValue?: string | number | boolean;
     notifyOnResult: boolean;
     testmode?: boolean;
 }
@@ -386,6 +387,12 @@ async function checkItem(item: Item) {
     }
 
     const result = await matcher(data, item.path, item.value);
+    if (item.errorValue) {
+        const errorResult = await matcher(data, item.path, item.errorValue);
+        if (errorResult) {
+            throw new Error('Error condition found');
+        }
+    }
 
     writeFile(`last/${item.name}.${result}.${item.dataType}`, dataStr, (err) => {
         if (err) console.error(err);
@@ -575,6 +582,7 @@ MATCHER_TYPES.amazon = (cfg: MatcherBaseConfig) => {
         matcher: 'text_contains',
         path: '',
         value: 'id="addToCart_feature_div"',
+        errorValue: '/errors/validateCaptcha',
         notifyOnResult: true,
         needH2: false,
         needProxy: true,
