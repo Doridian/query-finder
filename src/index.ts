@@ -98,17 +98,14 @@ function formatDateRange(dateRange?: DateRange) {
         return '<span>-</span>';
     }
 
-    const now = new Date();
-    const start = dateRange.start;
-    const end = dateRange.end || now;
+    if (!dateRange.end) {
+        return `Since ${formatDateDiff(dateRange.start)}`;    
+    }
 
-    return `${formatDateDiff(start)} - ${formatDateDiff(end, now)} (${formatDateDiff(start, end, '')})`;
+    return `${formatDateDiff(dateRange.start)} - ${formatDateDiff(dateRange.end)} (${formatDateDiff(dateRange.start, dateRange.end, '')})`;
 }
 
 function formatDateDiff(date: Date, relativeTo: Date = new Date(), suffix: string = ' ago') {
-    if (date === relativeTo) {
-        return '<span class="diff-0">Now</span>';
-    }
     let diff = Math.floor((relativeTo.getTime() - date.getTime()) / 1000);
     if (diff > MAX_TIME_AGO) {
         return `<span>${date.toISOString()}</span>`;
