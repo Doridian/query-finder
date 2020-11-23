@@ -42,6 +42,6 @@
         "type": "asus",
         "name": "ASUS Test",
         "sku": "202002AM150000001",
-        "enabled": true
+        "enabled": false
     }
 ]
