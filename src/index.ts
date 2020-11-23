@@ -614,7 +614,7 @@ MATCHER_TYPES.asus = (cfg: MatcherBaseConfig) => {
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
-        value: 'id="item_add_cart"',
+        value: 'style="display:none">Arrival Notice</button>',
         notifyOnResult: true,
         needH2: false,
         needProxy: false,
