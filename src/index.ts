@@ -600,7 +600,21 @@ MATCHER_TYPES.steam = (cfg: MatcherBaseConfig) => {
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
-        value: `id="btn_add_to_cart_`,
+        value: 'id="btn_add_to_cart_',
+        notifyOnResult: true,
+        needH2: false,
+        needProxy: false,
+    };
+};
+
+MATCHER_TYPES.asus = (cfg: MatcherBaseConfig) => {
+    return {
+        name: cfg.name,
+        url: `https://store.asus.com/us/item/${cfg.sku}`,
+        dataType: 'text',
+        matcher: 'text_contains',
+        path: '',
+        value: 'id="item_add_cart"',
         notifyOnResult: true,
         needH2: false,
         needProxy: false,

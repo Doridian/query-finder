@@ -71,5 +71,17 @@
         "name": "Amazon 3090 FTW3",
         "sku": "B08J5F3G18",
         "enabled": false
+    },
+    {
+        "type": "asus",
+        "name": "ASUS 3090 TUF OC",
+        "sku": "202011AM190000002",
+        "enabled": true
+    },
+    {
+        "type": "asus",
+        "name": "ASUS 3090 Strix",
+        "sku": "202010AM310000004",
+        "enabled": true
     }
 ]
