@@ -102,10 +102,10 @@ function formatDateRange(dateRange?: DateRange) {
     const start = dateRange.start;
     const end = dateRange.end || now;
 
-    return `${formatDateDiff(start, now, ' ago')} - ${formatDateDiff(end, now, ' ago')} (${formatDateDiff(start, end, '')})`;
+    return `${formatDateDiff(start)} - ${formatDateDiff(end, now)} (${formatDateDiff(start, end, '')})`;
 }
 
-function formatDateDiff(date: Date, relativeTo: Date, suffix: string) {
+function formatDateDiff(date: Date, relativeTo: Date = new Date(), suffix: string = ' ago') {
     if (date === relativeTo) {
         return '<span class="diff-0">Now</span>';
     }
@@ -157,7 +157,7 @@ function generateTable(filter: (i: Item, v: Status) => boolean) {
         htmlArray.push(`<tr>
     <td scope="row"><a href="${i.browserUrl || i.url}" target="_blank">${k}</a></td>
     <td class="status-${v.type}">${v.text}</td>
-    <td>${formatDate(v.date)}</td>
+    <td>${formatDateDiff(v.date)}</td>
     <td>${formatDateRange(v.dateLastOutOfStock)}</td>
     <td>${formatDateRange(v.dateLastStock)}</td>
     <td>${formatDateRange(v.dateLastError)}</td>
