@@ -99,13 +99,13 @@ function formatDateRange(dateRange?: DateRange) {
     }
 
     if (!dateRange.end) {
-        return `Since ${formatDateDiff(dateRange.start)}`;    
+        return formatDateDiff(dateRange.start, undefined, undefined, 'Since ');
     }
 
     return `${formatDateDiff(dateRange.start)} - ${formatDateDiff(dateRange.end)} (${formatDateDiff(dateRange.start, dateRange.end, '')})`;
 }
 
-function formatDateDiff(date: Date, relativeTo: Date = new Date(), suffix: string = ' ago') {
+function formatDateDiff(date: Date, relativeTo: Date = new Date(), suffix: string = ' ago', prefix: string = '') {
     let diff = Math.floor((relativeTo.getTime() - date.getTime()) / 1000);
     if (diff > MAX_TIME_AGO) {
         return `<span>${date.toISOString()}</span>`;
