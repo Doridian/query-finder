@@ -98,11 +98,18 @@ function formatDateRange(dateRange?: DateRange) {
         return '<span>-</span>';
     }
 
-    return `${formatDate(dateRange.start)} - ${dateRange.end ? formatDate(dateRange.end) : '<span class="diff-0">Now</span>'}`;
+    const now = new Date();
+    const start = dateRange.start;
+    const end = dateRange.end || now;
+
+    return `${formatDateDiff(start, now, ' ago')} - ${formatDateDiff(end, now, ' ago')} (${formatDateDiff(start, end, '')})`;
 }
 
-function formatDate(date: Date) {
-    let diff = Math.floor((Date.now() - date.getTime()) / 1000);
+function formatDateDiff(date: Date, relativeTo: Date, suffix: string) {
+    if (date === relativeTo) {
+        return '<span class="diff-0">Now</span>';
+    }
+    let diff = Math.floor((relativeTo.getTime() - date.getTime()) / 1000);
     if (diff > MAX_TIME_AGO) {
         return `<span>${date.toISOString()}</span>`;
     }
@@ -129,7 +136,7 @@ function formatDate(date: Date) {
     }
     strArray.push(`${diff}s`);
 
-    return `<span class="diff-${diffOrders}">${strArray.join(' ')} ago</span>`;
+    return `<span class="diff-${diffOrders}">${strArray.join(' ')}${suffix}</span>`;
 }
 
 function generateTable(filter: (i: Item, v: Status) => boolean) {
