@@ -18,7 +18,14 @@
         "name": "NewEgg 3090 Strix",
         "sku": "N82E16814126456",
         "desc": "asus-geforce-rtx-3090-rog-strix-rtx3090-o24g-gaming",
-        "enabled": false
+        "enabled": true
+    },
+    {
+        "type": "newegg",
+        "name": "NewEgg 3090 TUF",
+        "sku": "N82E16814126454",
+        "desc": "asus-geforce-rtx-3090-tuf-rtx3090-o24g-gaming",
+        "enabled": true
     },
     {
         "type": "bestbuy",
@@ -39,8 +46,15 @@
         "name": "BestBuy 3090 Strix",
         "sku": "6432447",
         "desc": "asus-geforce-rtx-3090-24gb-gddr6x-pci-express-4-0-strix-graphics-card-black",
-        "enabled": false
-    },    
+        "enabled": true
+    },
+    {
+        "type": "bestbuy",
+        "name": "BestBuy 3090 TUF",
+        "sku": "6432446",
+        "desc": "asus-tuf-rtx-3090-24gb-gddr6x-pci-express-4-0-graphics-card-black",
+        "enabled": true
+    }, 
     {
         "type": "amd",
         "name": "AMD 5950x",
