@@ -133,7 +133,7 @@ function formatDateDiff(date: Date, relativeTo: Date = new Date(), suffix: strin
     }
     strArray.push(`${diff}s`);
 
-    return `<span class="diff-${diffOrders}">${strArray.join(' ')}${suffix}</span>`;
+    return `<span class="diff-${diffOrders}">${prefix}${strArray.join(' ')}${suffix}</span>`;
 }
 
 function generateTable(filter: (i: Item, v: Status) => boolean) {
