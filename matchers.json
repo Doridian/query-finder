@@ -87,15 +87,9 @@
         "enabled": false
     },
     {
-        "type": "asus",
-        "name": "ASUS 3090 TUF OC",
-        "sku": "202011AM190000002",
-        "enabled": false
-    },
-    {
-        "type": "asus",
-        "name": "ASUS 3090 Strix",
-        "sku": "202010AM310000004",
-        "enabled": false
+        "type": "antonline",
+        "name": "antOnline 5950x",
+        "sku": "AMD/Computers/Electronic_Components/Microprocessors/1411788",
+        "enabled": true
     }
 ]

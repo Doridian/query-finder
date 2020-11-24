@@ -607,14 +607,14 @@ MATCHER_TYPES.steam = (cfg: MatcherBaseConfig) => {
     };
 };
 
-MATCHER_TYPES.asus = (cfg: MatcherBaseConfig) => {
+MATCHER_TYPES.antonline = (cfg: MatcherBaseConfig) => {
     return {
         name: cfg.name,
-        url: `https://store.asus.com/us/item/${cfg.sku}`,
+        url: `https://www.antonline.com//${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
-        value: 'style="display:none">Arrival Notice</button>',
+        value: '>Add to Cart</button>',
         notifyOnResult: true,
         needH2: false,
         needProxy: false,

@@ -39,9 +39,9 @@
         "enabled": false
     },
     {
-        "type": "asus",
-        "name": "ASUS Test",
-        "sku": "202002AM150000001",
-        "enabled": false
+        "type": "antonline",
+        "name": "antOnline Test",
+        "sku": "Microsoft/Accessories/Hardware_Connectivity/Connector_Adapters/1400386",
+        "enabled": true
     }
 ]
