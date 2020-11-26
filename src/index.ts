@@ -410,8 +410,8 @@ const tgApi = new TG({
     token: process.env.TELEGRAM_ACCESS_TOKEN,
 });
 
-function typeToDateRange(curStatus: Status): DateRange {
-    switch (curStatus.type) { 
+function typeToDateRange(curStatus: Status, curType: StatusType): DateRange {
+    switch (curType) { 
         case 'instock':
             if (!curStatus.dateLastStock) {
                 curStatus.dateLastStock = {};
@@ -430,6 +430,14 @@ function typeToDateRange(curStatus: Status): DateRange {
         default:
             return {};
     }
+}
+
+function endDateRange(curStatus: Status, curType: StatusType, date: Date) {
+    const range = typeToDateRange(curStatus, curType);
+    if (range.end) {
+        return;
+    }
+    range.end = date;
 }
 
 async function tryCheckItem(item: Item, allowNotify: boolean) {
@@ -485,13 +493,18 @@ async function tryCheckItem(item: Item, allowNotify: boolean) {
     } else {
         curType = 'outofstock';
     }
+
+    if (curType !== 'error') {
+        endDateRange(curStatus, 'error', curStatus.date);
+        endDateRange(curStatus, (curType === 'instock') ? 'outofstock' : 'instock', curStatus.date);
+    }
     
     if (curStatus.type !== curType) {
-        typeToDateRange(curStatus).end = curStatus.date;
-        
         curStatus.type = curType;
-        const useDateRange = typeToDateRange(curStatus);
-        useDateRange.start = curStatus.date;
+        const useDateRange = typeToDateRange(curStatus, curType);
+        if (!useDateRange.start || useDateRange.end) {
+            useDateRange.start = curStatus.date;
+        }
         useDateRange.end = undefined;
     }
 
