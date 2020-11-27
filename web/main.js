@@ -85,8 +85,8 @@ async function load() {
     const tableTests = generateTable(data, i => i.testmode);
     const tableItems = generateTable(data, i => !i.testmode);
 
-    document.getElementById('tableTests').innerHTML = tableTests;
-    document.getElementById('tableTtems').innerHTML = tableItems;
+    document.getElementById('tableTests').innerHTML = tableTests.join('');
+    document.getElementById('tableTtems').innerHTML = tableItems.join('');
     document.getElementById('gendate').innerText = data.date.toISOString();
 }
 
