@@ -100,6 +100,7 @@ function generateTable(data, filter, replace) {
         const aName = document.createElement('a');
         aName.href = i.browserUrl || i.url;
         aName.appendChild(document.createTextNode(k));
+        tdName.appendChild(aName);
         tr.appendChild(tdName);
         
         const tdStatus = makeElementWithChild('td', document.createTextNode(v.text));
