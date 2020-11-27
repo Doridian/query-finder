@@ -3,7 +3,7 @@ import { MatcherBaseConfig } from '..';
 export function factory(cfg: MatcherBaseConfig) {
     return {
         name: cfg.name,
-        url: `https://www.antonline.com//${cfg.sku}`,
+        url: `https://www.antonline.com/${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -11,5 +11,6 @@ export function factory(cfg: MatcherBaseConfig) {
         notifyOnResult: true,
         needH2: false,
         needProxy: false,
+        statusCodes: [200, 404]
     };
 }

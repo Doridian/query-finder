@@ -30,6 +30,7 @@ export interface Item {
     errorValue?: string | number | boolean;
     notifyOnResult: boolean;
     testmode?: boolean;
+    statusCodes?: number[];
 }
 
 export class ElementNotFoundError extends Error { }

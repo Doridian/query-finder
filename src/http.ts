@@ -104,10 +104,12 @@ async function fetchCustom(item: Item) {
     });
 }
 
+const DEFAULT_STATUS_CODES = [200];
+
 export async function getItemPage(item: Item) {
     const res = await fetchCustom(item);
-    if (res.status >= 300) {
-        throw new HttpError(res.status, await res.text());
+    if ((item.statusCodes || DEFAULT_STATUS_CODES).includes(res.status)) {
+        return res;
     }
-    return res;
+    throw new HttpError(res.status, await res.text());
 }
