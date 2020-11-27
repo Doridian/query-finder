@@ -114,7 +114,7 @@ function generateTable(data, filter, replace) {
         parent.appendChild(parent);
     }
 
-    replace.parentNode.replaceChild(replace, parent);
+    replace.parentNode.replaceChild(parent, replace);
 }
 
 async function loadStatus() {
