@@ -99,6 +99,7 @@ function generateTable(data, filter, replace) {
         tdName.scope = 'row';
         const aName = document.createElement('a');
         aName.href = i.browserUrl || i.url;
+        aName.target = '_blank';
         aName.appendChild(document.createTextNode(k));
         tdName.appendChild(aName);
         tr.appendChild(tdName);
