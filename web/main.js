@@ -109,7 +109,7 @@ function tryloadItems() {
         .catch((e) => console.error(e))
         .then(() => {
             if (!inited) {
-                setTimeout(tryloadItems, 1000)
+                setTimeout(tryloadItems, 1000);
             }
         });
 }
