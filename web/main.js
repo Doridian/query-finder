@@ -1,3 +1,5 @@
+let ITEMS_MAP = {};
+
 function dateReviver(_key , value) {
     if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,3}Z$/.test(value)) {
         return new Date(value);
@@ -6,7 +8,24 @@ function dateReviver(_key , value) {
     return value;
 }
 
-let ITEMS_MAP = {};
+function makeTextSpan(txt, className) {
+    const res = document.createElement('span');
+    if (className) {
+        res.className = className;
+    }
+    res.appendChild(makeText(txt));
+    return res;
+}
+
+function makeText(txt) {
+    return document.createTextNode(txt);
+}
+
+function makeElementWithChild(tag, child) {
+    const res = document.createElement(tag);
+    res.appendChild(child);
+    return res;
+}
 
 const ONE_MINUTE = 60;
 const ONE_HOUR = 60 * ONE_MINUTE;
@@ -14,20 +33,27 @@ const ONE_DAY = 24 * ONE_HOUR;
 const MAX_TIME_AGO = 30 * ONE_DAY;
 function formatDateRange(dateRange, now) {
     if (!dateRange || !dateRange.start) {
-        return '<span>-</span>';
+        return makeTextSpan('-');
     }
 
     if (!dateRange.end) {
         return formatDateDiff(dateRange.start, now, undefined, 'Since ');
     }
 
-    return `${formatDateDiff(dateRange.start, now)} - ${formatDateDiff(dateRange.end, now)} (${formatDateDiff(dateRange.start, dateRange.end, '')})`;
+    const node = documenr.createElement('span');
+    node.appendChild(formatDateDiff(dateRange.start, now));
+    node.appendChild(makeText(' - '));
+    node.appendChild(formatDateDiff(dateRange.end, now));
+    node.appendChild(makeText(' ('));
+    node.appendChild(formatDateDiff(dateRange.start, dateRange.end, ''));
+    node.appendChild(makeText(')'));
+    return node;
 }
 
 function formatDateDiff(date, relativeTo, suffix = ' ago', prefix = '') {
     let diff = Math.floor((relativeTo.getTime() - date.getTime()) / 1000);
     if (diff > MAX_TIME_AGO) {
-        return `<span>${date.toISOString()}</span>`;
+        return makeTextSpan(date.toISOString());
     }
 
     let strArray = [];
@@ -52,13 +78,13 @@ function formatDateDiff(date, relativeTo, suffix = ' ago', prefix = '') {
     }
     strArray.push(`${diff}s`);
 
-    return `<span class="diff-${diffOrders}">${prefix}${strArray.join(' ')}${suffix}</span>`;
+    return makeTextSpan(`${prefix}${strArray.join(' ')}${suffix}`, `diff-${diffOrders}`);
 }
 
-function generateTable(data, filter) {
-    const htmlArray = [];
-
+function generateTable(data, filter, replace) {
     const now = data.date;
+    const parent = document.createElement(replace.tagName);
+    parent.id = replace.id;
 
     for (const k of Object.keys(data.status)) {
         const v = data.status[k];
@@ -66,17 +92,29 @@ function generateTable(data, filter) {
         if (!i || !filter(i, v)) {
             continue;
         }
-        htmlArray.push(`<tr>
-    <td scope="row"><a href="${i.browserUrl || i.url}" target="_blank">${k}</a></td>
-    <td class="status-${v.type}">${v.text}</td>
-    <td>${formatDateDiff(v.date, now)}</td>
-    <td>${formatDateRange(v.dateLastOutOfStock, now)}</td>
-    <td>${formatDateRange(v.dateLastStock, now)}</td>
-    <td>${formatDateRange(v.dateLastError, now)}</td>
-</tr>`);
+
+        const tr = document.createElement('tr');
+        
+        const tdName = document.createElement('td');
+        tdName.scope = 'row';
+        const aName = document.createElement('a');
+        aName.href = i.browserUrl || i.url;
+        aName.appendChild(document.createTextNode(k));
+        tr.appendChild(tdName);
+        
+        const tdStatus = makeElementWithChild('td', document.createTextNode(v.text));
+        tdStatus.className = `status-${v.type}`;
+        tr.appendChild(tdStatus);
+
+        tr.appendChild(makeElementWithChild('td', formatDateDiff(v.data, now)));
+        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastOutOfStock, now)));
+        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastStock, now)));
+        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastError, now)));
+
+        parent.appendChild(parent);
     }
 
-    return htmlArray;
+    replace.parentNode.replaceChild(replace, parent);
 }
 
 async function loadStatus() {
@@ -84,11 +122,9 @@ async function loadStatus() {
     const text = await res.text();
     const data = JSON.parse(text, dateReviver);
 
-    const tableTests = generateTable(data, i => i.testmode);
-    const tableItems = generateTable(data, i => !i.testmode);
+    generateTable(data, i => i.testmode, document.getElementById('tableTests'));
+    generateTable(data, i => !i.testmode, document.getElementById('tableTtems'));
 
-    document.getElementById('tableTests').innerHTML = tableTests.join('');
-    document.getElementById('tableTtems').innerHTML = tableItems.join('');
     document.getElementById('gendate').innerText = data.date.toISOString();
 }
 
