@@ -84,6 +84,7 @@ export function startWebUI() {
                     inited: isFullyInited(),
                     items: ITEMS_MAP,
                 });
+                break;
             case '/favicon.ico':
                 sendError(response, '', 404);
                 break;
