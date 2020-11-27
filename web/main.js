@@ -40,7 +40,7 @@ function formatDateRange(dateRange, now) {
         return formatDateDiff(dateRange.start, now, undefined, 'Since ');
     }
 
-    const node = documenr.createElement('span');
+    const node = document.createElement('span');
     node.appendChild(formatDateDiff(dateRange.start, now));
     node.appendChild(makeText(' - '));
     node.appendChild(formatDateDiff(dateRange.end, now));
