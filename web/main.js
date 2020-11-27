@@ -111,7 +111,7 @@ function generateTable(data, filter, replace) {
         tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastStock, now)));
         tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastError, now)));
 
-        parent.appendChild(parent);
+        parent.appendChild(tr);
     }
 
     replace.parentNode.replaceChild(parent, replace);
