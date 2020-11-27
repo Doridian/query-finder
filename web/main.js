@@ -106,7 +106,7 @@ function generateTable(data, filter, replace) {
         tdStatus.className = `status-${v.type}`;
         tr.appendChild(tdStatus);
 
-        tr.appendChild(makeElementWithChild('td', formatDateDiff(v.data, now)));
+        tr.appendChild(makeElementWithChild('td', formatDateDiff(v.date, now)));
         tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastOutOfStock, now)));
         tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastStock, now)));
         tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastError, now)));
