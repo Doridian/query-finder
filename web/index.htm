@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Query-Finder</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <script src="main.js" type="text/javascript"></script>
+        <style>
+            .diff-3 {
+                color: blue;
+            }
+            td.status-instock, .diff-2 {
+                color: green;
+            }
+            td.status-outofstock, .diff-1 {
+                color: orange;
+            }
+            td.status-error, .diff-0 {
+                color: red;
+            }
+        </style>
+    </head>
+    <body onload="main();">
+        <div class="container-fluid">
+            <h2>Items</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</td>
+                        <th scope="col">Status</td>
+                        <th scope="col">Last check</td>
+                        <th scope="col">Last OoS</td>
+                        <th scope="col">Last Stock</td>
+                        <th scope="col">Last Error</td>
+                    </tr>
+                </thead>
+                <tbody id="tableTtems"></tbody>
+            </table>
+            <h2>Tests</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Item</td>
+                        <th scope="col">Status</td>
+                        <th scope="col">Last check</td>
+                        <th scope="col">Last OoS</td>
+                        <th scope="col">Last Stock</td>
+                        <th scope="col">Last Error</td>
+                    </tr>
+                </thead>
+                <tbody id="tableTests"></tbody>
+            </table>
+            <div class="alert alert-info" role="alert">
+                Page generated at: <span id="gendate"></span>
+            </div>
+        </div>
+    </body>
+</html>
