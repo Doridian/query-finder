@@ -121,5 +121,6 @@ function tryLoadStatus() {
 }
 
 function main() {
+    tryloadItems();
     tryLoadStatus();
 }
