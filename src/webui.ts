@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs';
 import { createServer, ServerResponse } from 'http';
 import { join, normalize } from 'path';
-import { ITEMS_MAP, LAST_STATUS_MAP } from './globals';
+import { isFullyInited, ITEMS_MAP, LAST_STATUS_MAP } from './globals';
 
 const approot = join(__dirname, '../');
 const webroot = join(approot, './web');
@@ -72,13 +72,18 @@ export function startWebUI() {
         const url = request.url!;
     
         switch (url) {
-            case '/data':
+            case '/status':
                 sendJSON(response, {
                     date: new Date(),
-                    items: ITEMS_MAP,
                     status: LAST_STATUS_MAP,
                 });
                 break;
+            case '/items':
+                sendJSON(response, {
+                    date: new Date(),
+                    inited: isFullyInited(),
+                    items: ITEMS_MAP,
+                });
             case '/favicon.ico':
                 sendError(response, '', 404);
                 break;

@@ -6,6 +6,8 @@ function dateReviver(_key , value) {
     return value;
 }
 
+let ITEMS_MAP = {};
+
 const ONE_MINUTE = 60;
 const ONE_HOUR = 60 * ONE_MINUTE;
 const ONE_DAY = 24 * ONE_HOUR;
@@ -60,7 +62,7 @@ function generateTable(data, filter) {
 
     for (const k of Object.keys(data.status)) {
         const v = data.status[k];
-        const i = data.items[k];
+        const i = ITEMS_MAP[k];
         if (!i || !filter(i, v)) {
             continue;
         }
@@ -77,8 +79,8 @@ function generateTable(data, filter) {
     return htmlArray;
 }
 
-async function load() {
-    const res = await fetch('/data');
+async function loadStatus() {
+    const res = await fetch('/status');
     const text = await res.text();
     const data = JSON.parse(text, dateReviver);
 
@@ -90,12 +92,34 @@ async function load() {
     document.getElementById('gendate').innerText = data.date.toISOString();
 }
 
-function tryLoad() {
-    load()
+async function loadItems() {
+    const res = await fetch('/items');
+    const text = await res.text();
+    const data = JSON.parse(text, dateReviver);
+
+    ITEMS_MAP = data.items;
+
+    return data.inited;
+}
+
+function tryloadItems() {
+    let inited = false;
+    loadItems()
+        .then((res) => { inited = res; })
         .catch((e) => console.error(e))
-        .then(() => setTimeout(tryLoad, 1000));
+        .then(() => {
+            if (!inited) {
+                setTimeout(tryLoadStatus, 1000)
+            }
+        });
+}
+
+function tryLoadStatus() {
+    loadStatus()
+        .catch((e) => console.error(e))
+        .then(() => setTimeout(tryLoadStatus, 1000));
 }
 
 function main() {
-    tryLoad();
+    tryLoadStatus();
 }
