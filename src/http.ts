@@ -38,7 +38,7 @@ function getAgent() {
 }
 
 function getUserAgent() {
-    return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 Edg/86.0.622.69';
+    return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47';
 }
 
 async function fetchCustom(item: Item) {
@@ -55,10 +55,17 @@ async function fetchCustom(item: Item) {
     }
     opts.method = 'GET';
     opts.headers = {
-        'Accept-Encoding': 'gzip, deflate, br',
-        'User-Agent': getUserAgent(),
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
+        'accept-encoding': 'gzip, deflate, br',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'accept-language': 'en-US,en;q=0.9',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': getUserAgent(),
+        'cache-control': 'no-cache',
+        'pragma': 'no-cache',
     };
     return new Promise<MyResponse>((resolve, reject) => {
         const request = item.needH2 ? h2request : h1request;
