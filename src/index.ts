@@ -17,7 +17,7 @@ function getSleepTime(min: number, max: number) {
 }
 
 async function testLoop(item: Item) {
-    const sleepTime = getSleepTime(minSleepTest, maxSleepTest);
+    const sleepTime = getSleepTime(minSleepTest, maxSleepTest) * (item.sleepMultiplier || 1);
     if (await tryCheckItem(item, false)) {
         console.log(`[${item.name}] TEST OK!`);
     }
@@ -25,7 +25,7 @@ async function testLoop(item: Item) {
 }
 
 async function itemLoop(item: Item) {
-    const sleepTime = getSleepTime(minSleep, maxSleep);
+    const sleepTime = getSleepTime(minSleep, maxSleep) * (item.sleepMultiplier || 1);
     await tryCheckItem(item, true);
     setTimeout(itemLoop, sleepTime, item);
 }

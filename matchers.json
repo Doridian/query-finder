@@ -78,7 +78,7 @@
         "type": "amazon",
         "name": "Amazon 5950x",
         "sku": "B0815Y8J9N",
-        "enabled": false
+        "enabled": true
     },
     {
         "type": "amazon",

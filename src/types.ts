@@ -38,6 +38,7 @@ export interface Item extends FetchItem, MinimalItem {
     notifyOnResult: boolean;
     testmode?: boolean;
     statusCodes?: number[];
+    sleepMultiplier?: number;
 }
 
 export class ElementNotFoundError extends Error { }

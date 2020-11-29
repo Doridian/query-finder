@@ -12,5 +12,6 @@ export function factory(cfg: MatcherBaseConfig) {
         notifyOnResult: true,
         needH2: false,
         needProxy: true,
+        sleepMultiplier: 5,
     };
 }
