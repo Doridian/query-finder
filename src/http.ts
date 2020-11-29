@@ -1,6 +1,6 @@
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import { RequestOptions, request as h1request, Agent } from 'https';
-import { ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
 import { parse } from 'url';
 import { inflate, brotliDecompress, gunzip } from 'zlib';
 import { promisify } from 'util';
@@ -15,7 +15,7 @@ const gunzipAsync = promisify(gunzip);
 
 export interface MyResponse {
     status: number;
-    headers: { [key: string]: string };
+    headers: { [key: string]: string | string[] | undefined };
     text(): string | Promise<string>;
 }
 
@@ -72,7 +72,7 @@ export async function fetchCustom(item: FetchItem) {
     };
     return new Promise<MyResponse>((resolve, reject) => {
         const request = item.needH2 ? h2request : h1request;
-        const req = request(opts, (res: ServerResponse) => {
+        const req = request(opts, (res: IncomingMessage) => {
             const chunks: Buffer[] = [];
             res.on('data', chunk => {
                 chunks.push(Buffer.from(chunk));
@@ -81,7 +81,7 @@ export async function fetchCustom(item: FetchItem) {
                 const allChunks = Buffer.concat(chunks);
 
                 let data: Buffer;
-                const encoding = (res as any).headers['content-encoding'] || 'identity';
+                const encoding = res.headers['content-encoding'] || 'identity';
 
                 switch (encoding) {
                     case 'identity':
@@ -103,7 +103,7 @@ export async function fetchCustom(item: FetchItem) {
 
                 resolve({
                     status: res.statusCode || 599,
-                    headers: (res as any).headers,
+                    headers: res.headers,
                     text() {
                         return dataStr;
                     },
