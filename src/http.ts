@@ -57,12 +57,11 @@ export async function fetchCustom(item: FetchItem) {
             item.fetchState = 'parse';
             curl.close();
             
+            const curlHdr = curlHeaders[0];
             const headers: { [key: string]: string } = {};
             
-            for (const hdr of curlHeaders) {
-                for (const k of Object.keys(hdr)) {
-                    headers[k.toLowerCase()] = hdr[k];
-                }
+            for (const k of Object.keys(curlHdr)) {
+                headers[k.toLowerCase()] = curlHdr[k];
             }
 
             item.fetchState = `done ${headers['content-encoding']}`;
