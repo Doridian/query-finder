@@ -87,7 +87,7 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
 
     try {
         const matches = await Promise.race([
-            delay(hardTimeout).then(() => { throw new Error('Hard timeout') }),
+            delay(hardTimeout).then(() => { throw new Error(`Hard timeout in fetchState ${item.fetchState}`) }),
             checkItem(item),
         ]);
         if (matches === item.notifyOnResult) {
