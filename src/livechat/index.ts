@@ -24,6 +24,8 @@ function writeLinkCache() {
 const TRIGGER_TERMS = ['5950'];
 const LINK_CACHE: { [key: string]: string } = loadLinkCache();
 const TITLE_REGEX = /<title>([^<>]+)<\/title>/i;
+const CARE_ABOUT_TEXT = false;
+const CARE_ABOUT_LINKS = true;
 
 export abstract class LiveChatBase {
     public abstract attachChat(): void | Promise<void>;
@@ -74,20 +76,25 @@ export abstract class LiveChatBase {
 
     private async processMessage(message: string) {
         console.log(`[CHAT] <${this.name}> ${message}`);
-        let messageInteresting = this.isTextInteresting(message);
+        let messageInteresting = CARE_ABOUT_TEXT && this.isTextInteresting(message);
 
-        // Check if we have any links
-        const split = message.split(' ');
-        for (const term of split) {
-            const termTrim = term.trim();
-            if (!termTrim) {
-                continue;
+        if (CARE_ABOUT_LINKS) {
+            // Check if we have any links
+            const split = message.split(' ');
+            for (const term of split) {
+                const termTrim = term.trim();
+                if (!termTrim) {
+                    continue;
+                }
+                const termLower = termTrim.toLowerCase();
+                if (!termLower.startsWith('http://') && !termLower.startsWith('https://')) {
+                    continue;
+                }
+                if (await this.checkLink(term)) {
+                    messageInteresting = true;
+                    break;
+                }
             }
-            const termLower = termTrim.toLowerCase();
-            if (!termLower.startsWith('http://') && !termLower.startsWith('https://')) {
-                continue;
-            }
-            await this.checkLink(term);
         }
 
         if (messageInteresting) {
@@ -98,12 +105,10 @@ export abstract class LiveChatBase {
     protected async checkLink(link: string) {
         const title = await this.processLink(link);
         if (!title) {
-            return;
+            return false;
         }
 
-        if (this.isTextInteresting(title)) {
-            await notifyRaw(`Link via ${this.name}: ${link}`);
-        }
+        return this.isTextInteresting(title);
     }
 
     private async processLink(link: string, depth: number = 0): Promise<string | undefined> {
