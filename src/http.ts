@@ -124,7 +124,10 @@ export async function fetchCustom(item: FetchItem) {
                 });
             });
         });
-        req.on('error', reject);
+        req.on('error', (err: any) => {
+            item.fetchState = 'errored';
+            reject(err);
+        });
         req.end();
     });
 }

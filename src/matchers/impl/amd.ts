@@ -9,7 +9,7 @@ export function factory(cfg: MatcherBaseConfig) {
         path: '',
         value: 'href="/en/direct-buy/add-to-cart/',
         notifyOnResult: true,
-        needH2: true,
+        needH2: false,
         needProxy: false,
         //randomQueryParam: 'r',
     };
