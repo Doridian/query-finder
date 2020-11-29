@@ -10,7 +10,6 @@ export function factory(cfg: MatcherBaseConfig) {
         value: 'id="addToCart_feature_div"',
         errorValue: '/errors/validateCaptcha',
         notifyOnResult: true,
-        needH2: false,
         needProxy: true,
         sleepMultiplier: 5,
     };
