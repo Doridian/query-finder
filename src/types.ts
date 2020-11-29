@@ -5,7 +5,7 @@ export interface DateRange {
 
 export type StatusType = 'instock' | 'outofstock' | 'error';
 export interface Status {
-    text: string;
+    lastError: string;
     type: StatusType;
     date: Date;
     dateLastStock?: DateRange;

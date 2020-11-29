@@ -81,7 +81,6 @@ async function checkItem(item: Item) {
 }
 
 export async function tryCheckItem(item: Item, allowNotify: boolean) {
-    let status = 'N/A';
     let result = false;
     let errored = false;
     const curStatus: Status = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'error' };
@@ -92,7 +91,6 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
             checkItem(item),
         ]);
         if (matches === item.notifyOnResult) {
-            status = 'In stock';
             result = true;
             if (allowNotify) {
                 console.log(`[${item.name}] FOUND!`);
@@ -102,7 +100,6 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
                 });
             }
         } else {
-            status = 'Out of stock';
             if (allowNotify) {
                 console.log(`[${item.name}] NOT FOUND!`);
             }
@@ -110,15 +107,14 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
     } catch(e) {
         errored = true;
         if (e instanceof HttpError) {
-            status = `HTTP error: ${e.code}`;
+            curStatus.lastError = `HTTP error: ${e.code}`;
         } else {
-            status = `Exception: ${e}`;
+            curStatus.lastError = `Exception: ${e}`;
             console.error(e.stack || e);
         }
-        console.error(`[${item.name}] ${status}`);
+        console.error(`[${item.name}] ${curStatus.lastError}`);
     }
 
-    curStatus.text = status;
     curStatus.date = new Date();
     let curType: StatusType;
     if (result) {
