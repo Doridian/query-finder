@@ -20,7 +20,7 @@ function getSleepTime(min: number, max: number) {
 }
 
 const TIMEOUT_SYMBOL = Symbol('TIMEOUT');
-async function tryCheckWithHardTimeout(item: Item, allowNotify: boolean, hardTimeout: number) {
+async function tryCheckWithHardTimeout(item: Item, allowNotify: boolean) {
     const res = await Promise.race([
         delay(hardTimeout).then(() => TIMEOUT_SYMBOL),
         tryCheckItem(item, allowNotify),
@@ -34,7 +34,7 @@ async function tryCheckWithHardTimeout(item: Item, allowNotify: boolean, hardTim
 
 async function testLoop(item: Item) {
     const sleepTime = getSleepTime(minSleepTest, maxSleepTest);
-    if (await tryCheckWithHardTimeout(item, false, sleepTime + hardTimeout)) {
+    if (await tryCheckWithHardTimeout(item, false)) {
         console.log(`[${item.name}] TEST OK!`);
     }
     setTimeout(testLoop, sleepTime, item);
@@ -42,7 +42,7 @@ async function testLoop(item: Item) {
 
 async function itemLoop(item: Item) {
     const sleepTime = getSleepTime(minSleep, maxSleep);
-    await tryCheckWithHardTimeout(item, true, sleepTime + hardTimeout);
+    await tryCheckWithHardTimeout(item, true);
     setTimeout(itemLoop, sleepTime, item);
 }
 

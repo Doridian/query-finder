@@ -7,6 +7,8 @@ import { promisify } from 'util';
 import { FetchItem, Item } from './types';
 const { request: h2request } = require('http2-client');
 
+const softTimeout = parseInt(process.env.SOFT_TIMEOUT!, 10);
+
 const inflateAsync = promisify(inflate);
 const brotliDecompressAsync = promisify(brotliDecompress);
 const gunzipAsync = promisify(gunzip);
@@ -28,13 +30,13 @@ function getProxyAgent() {
         host: process.env.PROXY_HOST,
         userId: process.env.PROXY_USER,
         password: process.env.PROXY_PASSWORD,
-        timeout: 10000,
+        timeout: softTimeout,
     });
 }
 
 function getAgent() {
     return new Agent({
-        timeout: 10000,
+        timeout: softTimeout,
     })
 }
 
@@ -48,7 +50,7 @@ export async function fetchCustom(item: FetchItem) {
         let ch = opts.path?.includes('?') ?  '&' : '?';
         opts.path += `${ch}${item.randomQueryParam}=${Date.now()}`;
     }
-    opts.timeout = 10000;
+    opts.timeout = softTimeout;
     if (item.needProxy) {
         opts.agent = getProxyAgent();
     } else {
