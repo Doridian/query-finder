@@ -1,5 +1,4 @@
 import { writeFile } from 'fs';
-import { JSDOM } from 'jsdom';
 import { endDateRange, typeToDateRange } from './date';
 import { LAST_STATUS_MAP, writeStatus } from './globals';
 import { getItemPage, HttpError } from './http';
@@ -25,14 +24,6 @@ const itemMatcherType: { [key: string]: ItemMatcher } = {
         return curData === value;
     },
 
-    dom_text_contains(data: JSDOM, path: string, value: any) {
-        const ele = data.window.document.querySelector(path);
-        if (!ele) {
-            throw new ElementNotFoundError(`NOT FOUND: Selector ${path}; Data: ${data.window.document.body.innerHTML}`);
-        }
-        return ele.textContent.toLowerCase().includes(value);
-    },
-
     text_contains(data: string, _path: string, value: any) {
         return data.includes(value);
     },
@@ -41,10 +32,6 @@ const itemMatcherType: { [key: string]: ItemMatcher } = {
 type DataType = (data: string) => any | Promise<any>;
 
 const dataTypeDecoder: { [key: string]: DataType } = {
-    html(dataStr: string) {
-        return new JSDOM(dataStr);
-    },
-
     text(dataStr: string) {
         return dataStr;
     },

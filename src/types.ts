@@ -13,8 +13,8 @@ export interface Status {
     dateLastOutOfStock?: DateRange;
 }
 
-export type ItemDataType = 'json' | 'html' | 'text';
-export type ItemMatcherType = 'object' | 'dom_text_contains' | 'text_contains';
+export type ItemDataType = 'json' | 'text';
+export type ItemMatcherType = 'object' | 'text_contains';
 
 export interface MinimalItem {
     name: string;
