@@ -6,6 +6,7 @@ import { startWebUI } from './webui';
 import { loadMatchers } from './matchers';
 import { tryCheckItem } from './check';
 import { YouTubeChat } from './livechat/youtube';
+import { delay } from './util';
 
 startWebUI();
 
@@ -13,20 +14,36 @@ const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
 const maxSleep = parseInt(process.env.PAGE_SLEEP_MAX!, 10);
 const minSleepTest = parseInt(process.env.TEST_SLEEP_MIN!, 10);
 const maxSleepTest = parseInt(process.env.TEST_SLEEP_MAX!, 10);
+const hardTimeout = parseInt(process.env.HARD_TIMEOUT!, 10);
 function getSleepTime(min: number, max: number) {
     return min + (Math.random() * (max - min));
 }
 
+const TIMEOUT_SYMBOL = Symbol('TIMEOUT');
+async function tryCheckWithHardTimeout(item: Item, allowNotify: boolean, hardTimeout: number) {
+    const res = await Promise.race([
+        delay(hardTimeout).then(() => TIMEOUT_SYMBOL),
+        tryCheckItem(item, allowNotify),
+    ]);
+    if (res === TIMEOUT_SYMBOL) {
+        console.error(`[${item.name}] HARD TIMEOUT!`);
+        return false;
+    }
+    return res as boolean;
+}
+
 async function testLoop(item: Item) {
-    if (await tryCheckItem(item, false)) {
+    const sleepTime = getSleepTime(minSleepTest, maxSleepTest);
+    if (await tryCheckWithHardTimeout(item, false, sleepTime + hardTimeout)) {
         console.log(`[${item.name}] TEST OK!`);
     }
-    setTimeout(testLoop, getSleepTime(minSleepTest, maxSleepTest), item);
+    setTimeout(testLoop, sleepTime, item);
 }
 
 async function itemLoop(item: Item) {
-    await tryCheckItem(item, true);
-    setTimeout(itemLoop, getSleepTime(minSleep, maxSleep), item);
+    const sleepTime = getSleepTime(minSleep, maxSleep);
+    await tryCheckWithHardTimeout(item, true, sleepTime + hardTimeout);
+    setTimeout(itemLoop, sleepTime, item);
 }
 
 async function main() {
