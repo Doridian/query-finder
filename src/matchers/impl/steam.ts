@@ -9,7 +9,6 @@ export function factory(cfg: MatcherBaseConfig) {
         path: '',
         value: 'id="btn_add_to_cart_',
         notifyOnResult: true,
-        needH2: false,
         needProxy: false,
     };
 }

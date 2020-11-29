@@ -10,7 +10,6 @@ export function factory(cfg: MatcherBaseConfig) {
         path: 'MainItem.Instock',
         value: true,
         notifyOnResult: true,
-        needH2: false,
         needProxy: true,
         //randomQueryParam: 'r',
     };

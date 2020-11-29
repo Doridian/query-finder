@@ -24,7 +24,6 @@ export interface MinimalItem {
 
 export interface FetchItem {
     url: string;
-    needH2: boolean;
     needProxy: boolean;
     randomQueryParam?: string;
     fetchState?: string;

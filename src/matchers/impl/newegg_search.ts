@@ -9,7 +9,6 @@ export function factory(cfg: MatcherBaseConfig) {
         path: '',
         value: 'Add to cart',
         notifyOnResult: true,
-        needH2: false,
         needProxy: true,
         //randomQueryParam: 'r',
     };

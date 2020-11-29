@@ -22,7 +22,6 @@ function getUserAgent() {
 }
 
 export async function fetchCustom(item: FetchItem) {
-    //const opts = parse(item.url) as RequestOptions;
     let url = item.url;
     if (item.randomQueryParam) {
         let ch = url.includes('?') ?  '&' : '?';

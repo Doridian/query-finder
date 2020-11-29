@@ -9,7 +9,6 @@ export function factory(cfg: MatcherBaseConfig) {
         path: '',
         value: '>Add to Cart</button>',
         notifyOnResult: true,
-        needH2: false,
         needProxy: false,
         statusCodes: [200, 404]
     };

@@ -12,7 +12,6 @@ export function factory(cfg: MatcherBaseConfig) {
         path: `jsonGraph.shop.buttonstate.v5.item.skus.${cfg.sku}.conditions.NONE.destinationZipCode.${BESTBUY_ZIP}.storeId.${BESTBUY_STORE}.context.cyp.addAll.false.value.buttonStateResponseInfos.0.buttonState`,
         value: 'SOLD_OUT',
         notifyOnResult: false,
-        needH2: true,
         needProxy: false,
         //randomQueryParam: 'r',
     };
