@@ -32,8 +32,8 @@ export async function fetchCustom(item: FetchItem) {
     const curl = new Curl();
     curl.setOpt('URL', url);
     curl.setOpt('FOLLOWLOCATION', false);
+    curl.setOpt('ACCEPT_ENCODING', '');
     curl.setOpt('HTTPHEADER', [
-        'accept-encoding: gzip, deflate, br',
         'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'accept-language: en-US,en;q=0.9',
         'sec-fetch-dest: document',
