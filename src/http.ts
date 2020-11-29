@@ -54,16 +54,18 @@ export async function fetchCustom(item: FetchItem) {
 
     return new Promise<MyResponse>((resolve, reject) => {
         curl.on('end', (status, data: string, curlHeaders: HeaderInfo[]) => {
-            item.fetchState = 'done';
+            item.fetchState = 'parse';
             curl.close();
-
+            
             const headers: { [key: string]: string } = {};
-
+            
             for (const hdr of curlHeaders) {
                 for (const k of Object.keys(hdr)) {
                     headers[k.toLowerCase()] = hdr[k];
                 }
             }
+
+            item.fetchState = `done ${headers['content-encoding']}`;
 
             resolve({
                 status,
