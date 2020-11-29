@@ -144,12 +144,17 @@ export abstract class LiveChatBase {
             console.warn(`[LINK] Got status code ${res.status} on: ${link}`)
             return;
         } else {
-            const text = await res.text();
-            const m = TITLE_REGEX.exec(text);
-            if (!m) {
-                title = text;
+            const contentType = res.headers['Content-Type'] || res.headers['content-type'] || 'text/plain';
+            if (!contentType.startsWith('text/')) {
+                title = '[BINARY DATA]';
             } else {
-                title = m[1];
+                const text = await res.text();
+                const m = TITLE_REGEX.exec(text);
+                if (!m) {
+                    title = text;
+                } else {
+                    title = m[1];
+                }
             }
         }
 
