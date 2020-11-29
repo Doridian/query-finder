@@ -1,21 +1,11 @@
-import { SocksProxyAgent } from 'socks-proxy-agent';
-import { RequestOptions, request as h1request, Agent } from 'https';
-import { IncomingMessage, ServerResponse } from 'http';
-import { parse } from 'url';
-import { inflate, brotliDecompress, gunzip } from 'zlib';
-import { promisify } from 'util';
 import { FetchItem, Item } from './types';
-const { request: h2request } = require('http2-client');
+import { Curl, HeaderInfo } from 'node-libcurl';
 
 const softTimeout = parseInt(process.env.SOFT_TIMEOUT!, 10);
 
-const inflateAsync = promisify(inflate);
-const brotliDecompressAsync = promisify(brotliDecompress);
-const gunzipAsync = promisify(gunzip);
-
 export interface MyResponse {
     status: number;
-    headers: { [key: string]: string | string[] | undefined };
+    headers: { [key: string]: string };
     text(): string | Promise<string>;
 }
 
@@ -25,110 +15,74 @@ export class HttpError extends Error {
     }
 }
 
-const proxyAgent = new SocksProxyAgent({
-    host: process.env.PROXY_HOST,
-    userId: process.env.PROXY_USER,
-    password: process.env.PROXY_PASSWORD,
-    timeout: softTimeout,
-});
-function getProxyAgent() {
-    return proxyAgent;
-}
-
-const agent = new Agent({
-    timeout: softTimeout,
-});
-function getAgent() {
-    return agent;
-}
+const proxyUrl = `socks5://${process.env.PROXY_USER}:${process.env.PROXY_PASSWORD}@${process.env.PROXY_HOST}`;
 
 function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47';
 }
 
 export async function fetchCustom(item: FetchItem) {
-    const opts = parse(item.url) as RequestOptions;
+    //const opts = parse(item.url) as RequestOptions;
+    let url = item.url;
     if (item.randomQueryParam) {
-        let ch = opts.path?.includes('?') ?  '&' : '?';
-        opts.path += `${ch}${item.randomQueryParam}=${Date.now()}`;
+        let ch = url.includes('?') ?  '&' : '?';
+        url += `${ch}${item.randomQueryParam}=${Date.now()}`;
     }
-    opts.timeout = softTimeout;
+
+    const curl = new Curl();
+    curl.setOpt('URL', url);
+    curl.setOpt('FOLLOWLOCATION', false);
+    curl.setOpt('HTTPHEADER', [
+        'accept-encoding: gzip, deflate, br',
+        'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'accept-language: en-US,en;q=0.9',
+        'sec-fetch-dest: document',
+        'sec-fetch-mode: navigate',
+        'sec-fetch-site: none',
+        'sec-fetch-user: ?1',
+        'upgrade-insecure-requests: 1',
+        `user-agent: ${getUserAgent()}`,
+        'cache-control: no-cache',
+        'pragma: no-cache',
+    ]);
+    curl.setOpt('TIMEOUT_MS', softTimeout);
     if (item.needProxy) {
-        opts.agent = getProxyAgent();
-    } else {
-        opts.agent = getAgent();
+        curl.setOpt('PROXY', proxyUrl);
     }
-    opts.method = 'GET';
-    opts.headers = {
-        'accept-encoding': 'gzip, deflate, br',
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'accept-language': 'en-US,en;q=0.9',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'none',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': getUserAgent(),
-        'cache-control': 'no-cache',
-        'pragma': 'no-cache',
-    };
 
     item.fetchState = 'start';
 
     return new Promise<MyResponse>((resolve, reject) => {
-        const request = item.needH2 ? h2request : h1request;
-        item.fetchState = 'started';
+        curl.on('end', (status, data: string, curlHeaders: HeaderInfo[]) => {
+            item.fetchState = 'done';
+            curl.close();
 
-        const req = request(opts, (res: IncomingMessage) => {
-            const chunks: Buffer[] = [];
-            item.fetchState = 'bodystart';
+            const headers: { [key: string]: string } = {};
 
-            res.on('data', chunk => {
-                chunks.push(Buffer.from(chunk));
-                item.fetchState = `bodychunk ${chunks.length}`;
-            });
-            res.on('end', async () => {
-                item.fetchState = 'end';
-
-                const allChunks = Buffer.concat(chunks);
-
-                let data: Buffer;
-                const encoding = res.headers['content-encoding'] || 'identity';
-
-                switch (encoding) {
-                    case 'identity':
-                    default:
-                        data = allChunks;
-                        break;
-                    case 'gzip':
-                        data = await gunzipAsync(allChunks);
-                        break;
-                    case 'br':
-                        data = await brotliDecompressAsync(allChunks);
-                        break;
-                    case 'deflate':
-                        data = await inflateAsync(allChunks);
-                        break;
+            for (const hdr of curlHeaders) {
+                for (const k of Object.keys(hdr)) {
+                    headers[k.toLowerCase()] = hdr[k];
                 }
+            }
 
-                const dataStr = data.toString('utf8');
-
-                item.fetchState = 'done';
-
-                resolve({
-                    status: res.statusCode || 599,
-                    headers: res.headers,
-                    text() {
-                        return dataStr;
-                    },
-                });
+            resolve({
+                status,
+                headers,
+                text() {
+                    return data;
+                },
             });
         });
-        req.on('error', (err: any) => {
+
+        curl.on('error', (err: any) => {
             item.fetchState = 'errored';
+            curl.close();
             reject(err);
         });
-        req.end();
+
+        curl.perform();
+
+        item.fetchState = 'started';
     });
 }
 
