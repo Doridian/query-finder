@@ -5,6 +5,9 @@ import { LAST_STATUS_MAP, writeStatus } from './globals';
 import { getItemPage, HttpError } from './http';
 import { notify } from './notifiers';
 import { ElementNotFoundError, Item, Status, StatusType } from './types';
+import { delay } from './util';
+
+const hardTimeout = parseInt(process.env.HARD_TIMEOUT!, 10);
 
 type ItemMatcher = (data: any, path: any, value: any) => boolean | Promise<boolean>;
 
@@ -84,7 +87,10 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
     const curStatus: Status = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'error' };
 
     try {
-        const matches = await checkItem(item);
+        const matches = await Promise.race([
+            delay(hardTimeout).then(() => { throw new Error('Hard timeout') }),
+            checkItem(item),
+        ]);
         if (matches === item.notifyOnResult) {
             status = 'In stock';
             result = true;
