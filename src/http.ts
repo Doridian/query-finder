@@ -25,19 +25,21 @@ export class HttpError extends Error {
     }
 }
 
+const proxyAgent = new SocksProxyAgent({
+    host: process.env.PROXY_HOST,
+    userId: process.env.PROXY_USER,
+    password: process.env.PROXY_PASSWORD,
+    timeout: softTimeout,
+});
 function getProxyAgent() {
-    return new SocksProxyAgent({
-        host: process.env.PROXY_HOST,
-        userId: process.env.PROXY_USER,
-        password: process.env.PROXY_PASSWORD,
-        timeout: softTimeout,
-    });
+    return proxyAgent;
 }
 
+const agent = new Agent({
+    timeout: softTimeout,
+});
 function getAgent() {
-    return new Agent({
-        timeout: softTimeout,
-    })
+    return agent;
 }
 
 function getUserAgent() {
