@@ -5,8 +5,6 @@ import { setFullyInited } from './globals';
 import { startWebUI } from './webui';
 import { loadMatchers } from './matchers';
 import { tryCheckItem } from './check';
-import { YouTubeChat } from './livechat/youtube';
-import { delay } from './util';
 
 startWebUI();
 
@@ -42,18 +40,6 @@ async function main() {
     await Promise.all(tests.map(t => testLoop(t)));
     await Promise.all(matchers.map(m => itemLoop(m)));
 }
-
-async function chatMain() {
-    const yt = new YouTubeChat({
-        channelId: 'UCs9EGYVhFw--tRN0VESceMA',
-        searchString: '5950X',
-        name: 'YouTube Falcodrin',
-    });
-    await yt.findChat();
-}
-
-chatMain().catch((e) => console.error('chatMain', e));
-
 
 main()
     .then(() => {
