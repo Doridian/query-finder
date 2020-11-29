@@ -20,7 +20,7 @@ export function writeStatus() {
         }
         console.log(err.code);
         console.error(err);
-    })
+    });
 }
 
 function loadStatus() {

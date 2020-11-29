@@ -16,13 +16,20 @@ export interface Status {
 export type ItemDataType = 'json' | 'html' | 'text';
 export type ItemMatcherType = 'object' | 'dom_text_contains' | 'text_contains';
 
-export interface Item {
+export interface MinimalItem {
+    name: string;
+    url: string;
+    browserUrl?: string;
+}
+
+export interface FetchItem {
     url: string;
     needH2: boolean;
     needProxy: boolean;
     randomQueryParam?: string;
-    name: string;
-    browserUrl?: string;
+}
+
+export interface Item extends FetchItem, MinimalItem {
     dataType: ItemDataType;
     matcher: ItemMatcherType;
     path: string;

@@ -4,7 +4,7 @@ import { ServerResponse } from 'http';
 import { parse } from 'url';
 import { inflate, brotliDecompress, gunzip } from 'zlib';
 import { promisify } from 'util';
-import { Item } from './types';
+import { FetchItem, Item } from './types';
 const { request: h2request } = require('http2-client');
 
 const inflateAsync = promisify(inflate);
@@ -13,6 +13,7 @@ const gunzipAsync = promisify(gunzip);
 
 export interface MyResponse {
     status: number;
+    headers: { [key: string]: string };
     text(): string | Promise<string>;
 }
 
@@ -41,7 +42,7 @@ function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47';
 }
 
-async function fetchCustom(item: Item) {
+export async function fetchCustom(item: FetchItem) {
     const opts = parse(item.url) as RequestOptions;
     if (item.randomQueryParam) {
         let ch = opts.path?.includes('?') ?  '&' : '?';
@@ -100,6 +101,7 @@ async function fetchCustom(item: Item) {
 
                 resolve({
                     status: res.statusCode || 599,
+                    headers: (res as any).headers,
                     text() {
                         return dataStr;
                     },
