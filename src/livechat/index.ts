@@ -141,7 +141,7 @@ export abstract class LiveChatBase {
         if (res.status >= 300 && res.status <= 399) {
             title = await this.processLink(res.headers.location || res.headers.Location, depth + 1);
         } else if (res.status < 200 || res.status > 299) {
-            console.warn(`[LINK] Got status code ${res.status} on: ${link}`)
+            console.warn(`[LINK] Got status code ${res.status} on: ${link}`);
             return;
         } else {
             const contentType = res.headers['Content-Type'] || res.headers['content-type'] || 'text/plain';
