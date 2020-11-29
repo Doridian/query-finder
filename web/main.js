@@ -104,7 +104,19 @@ function generateTable(data, filter, replace) {
         tdName.appendChild(aName);
         tr.appendChild(tdName);
         
-        const tdStatus = makeElementWithChild('td', document.createTextNode(v.text));
+        let statusText;
+        switch (v.type) {
+            case 'error':
+                statusText = v.lastError;
+                break;
+            case 'instock':
+                statusText = 'In stock';
+                break;
+            case 'outofstock':
+                statusText = 'Out of stock';
+                break;
+        }
+        const tdStatus = makeElementWithChild('td', document.createTextNode(statusText));
         tdStatus.className = `status-${v.type}`;
         tr.appendChild(tdStatus);
 
