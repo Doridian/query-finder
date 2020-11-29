@@ -118,8 +118,7 @@ export class YouTubeChat extends LiveChatBase {
                     continue;
                 }
 
-                // Do not await
-                this.submitMessage(msgDetails.messageText);
+                await this.submitMessage(msgDetails.messageText);
             }
         }
     }
