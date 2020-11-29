@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 import { Item } from './types';
-import { setFullyInited } from './globals';
+import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals';
 import { startWebUI } from './webui';
 import { loadMatchers } from './matchers';
 import { tryCheckItem } from './check';
@@ -44,6 +44,12 @@ async function main() {
 main()
     .then(() => {
         console.log('INIT DONE');
+        for (const k of Object.keys(LAST_STATUS_MAP)) {
+            if (ITEMS_MAP[k]) {
+                continue;
+            }
+            delete LAST_STATUS_MAP[k];
+        }
         setFullyInited();
     })
     .catch((e) => {
