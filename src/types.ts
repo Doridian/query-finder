@@ -27,6 +27,7 @@ export interface FetchItem {
     needH2: boolean;
     needProxy: boolean;
     randomQueryParam?: string;
+    fetchState?: string;
 }
 
 export interface Item extends FetchItem, MinimalItem {

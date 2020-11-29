@@ -72,14 +72,24 @@ export async function fetchCustom(item: FetchItem) {
         'cache-control': 'no-cache',
         'pragma': 'no-cache',
     };
+
+    item.fetchState = 'start';
+
     return new Promise<MyResponse>((resolve, reject) => {
         const request = item.needH2 ? h2request : h1request;
+        item.fetchState = 'started';
+
         const req = request(opts, (res: IncomingMessage) => {
             const chunks: Buffer[] = [];
+            item.fetchState = 'bodystart';
+
             res.on('data', chunk => {
                 chunks.push(Buffer.from(chunk));
+                item.fetchState = `bodychunk ${chunks.length}`;
             });
             res.on('end', async () => {
+                item.fetchState = 'end';
+
                 const allChunks = Buffer.concat(chunks);
 
                 let data: Buffer;
@@ -102,6 +112,8 @@ export async function fetchCustom(item: FetchItem) {
                 }
 
                 const dataStr = data.toString('utf8');
+
+                item.fetchState = 'done';
 
                 resolve({
                     status: res.statusCode || 599,
