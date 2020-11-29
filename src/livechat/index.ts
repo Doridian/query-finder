@@ -6,7 +6,7 @@ import { readFileSync, writeFile } from 'fs';
 function loadLinkCache() {
     let _obj: { [key: string]: string } = {};
     try {
-        _obj = JSON.parse(readFileSync('./last/_link_cache.json', 'utf8'));
+        _obj = JSON.parse(readFileSync('./link_cache.json', 'utf8'));
     } catch (e) {
         console.error(e);
     }
@@ -14,7 +14,7 @@ function loadLinkCache() {
 }
 
 function writeLinkCache() {
-    writeFile('./last/_link_cache.json', JSON.stringify(LINK_CACHE), (e) => {
+    writeFile('./link_cache.json', JSON.stringify(LINK_CACHE), (e) => {
         if (e) {
             console.error('Error writing link cache', e);
         }

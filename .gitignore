@@ -3,3 +3,5 @@ node_modules
 /.env
 /last/*
 !/last/.keep
+/status.json
+/link_cache.json

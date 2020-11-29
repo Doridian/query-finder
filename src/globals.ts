@@ -11,7 +11,7 @@ export function setFullyInited() {
 }
 
 export function writeStatus() {
-    writeFile('./last/_status.json', JSON.stringify(LAST_STATUS_MAP), (err) => {
+    writeFile('./status.json', JSON.stringify(LAST_STATUS_MAP), (err) => {
         if (!err) {
             return;
         }
@@ -33,7 +33,7 @@ function loadStatus() {
     }
     let _status: { [key: string]: Status } = {};
     try {
-        _status = JSON.parse(readFileSync('./last/_status.json', 'utf8'), reviver);
+        _status = JSON.parse(readFileSync('./status.json', 'utf8'), reviver);
     } catch (e) {
         console.error(e);
     }
