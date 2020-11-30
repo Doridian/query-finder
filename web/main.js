@@ -1,4 +1,5 @@
-const RENDER_MIN_INTERVAL = 500;
+const RENDER_INTERVAL = 500;
+const FETCH_PAUSE = 1000;
 
 let ITEMS_MAP = {};
 let STATUS_MAP = {};
@@ -150,7 +151,7 @@ function renderTables() {
 
 function renderTablesDebounced() {
     const now = new Date();
-    if (now - RENDER_DATE < RENDER_MIN_INTERVAL) {
+    if (now - RENDER_DATE < RENDER_INTERVAL) {
         return;
     }
     renderTables();
@@ -186,7 +187,7 @@ function tryloadItems() {
         .catch((e) => console.error(e))
         .then(() => {
             if (!inited) {
-                setTimeout(tryloadItems, 1000);
+                setTimeout(tryloadItems, FETCH_PAUSE);
             }
         });
 }
@@ -194,11 +195,11 @@ function tryloadItems() {
 function tryLoadStatus() {
     loadStatus()
         .catch((e) => console.error(e))
-        .then(() => setTimeout(tryLoadStatus, 1000));
+        .then(() => setTimeout(tryLoadStatus, FETCH_PAUSE));
 }
 
 function main() {
     tryloadItems();
     tryLoadStatus();
-    setInterval(renderTablesDebounced, 100);
+    setInterval(renderTablesDebounced, RENDER_INTERVAL);
 }
