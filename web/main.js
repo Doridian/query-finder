@@ -152,6 +152,8 @@ async function loadStatus() {
 
     FETCH_DATE = data.date;
     STATUS_MAP = data.status;
+
+    renderTables();
 }
 
 async function loadItems() {
@@ -160,6 +162,8 @@ async function loadItems() {
     const data = JSON.parse(text, dateReviver);
 
     ITEMS_MAP = data.items;
+
+    renderTables();
 
     return data.inited;
 }
