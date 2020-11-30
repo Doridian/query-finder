@@ -72,20 +72,23 @@ function formatDateDiff(date, relativeTo, suffix = ' ago', prefix = '') {
     if (diff >= ONE_DAY) {
         strArray.push(`${Math.floor(diff / ONE_DAY)}d`);
         diff %= ONE_DAY;
-        if (diffOrders < 3)
+        if (diffOrders < 3) {
             diffOrders = 3;
+        }
     }
     if (diff >= ONE_HOUR) {
         strArray.push(`${Math.floor(diff / ONE_HOUR)}h`);
         diff %= ONE_HOUR;
-        if (diffOrders < 2)
+        if (diffOrders < 2) {
             diffOrders = 2;
+        }
     }
     if (diff >= ONE_MINUTE) {
         strArray.push(`${Math.floor(diff / ONE_MINUTE)}m`);
         diff %= ONE_MINUTE;
-        if (diffOrders < 1)
+        if (diffOrders < 1) {
             diffOrders = 1;
+        }
     }
     strArray.push(`${diff}s`);
 
