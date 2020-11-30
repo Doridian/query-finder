@@ -1,4 +1,6 @@
 let ITEMS_MAP = {};
+let STATUS_MAP = {};
+let FETCH_DATE = undefined;
 
 function dateReviver(_key , value) {
     if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,3}Z$/.test(value)) {
@@ -81,13 +83,12 @@ function formatDateDiff(date, relativeTo, suffix = ' ago', prefix = '') {
     return makeTextSpan(`${prefix}${strArray.join(' ')}${suffix}`, `diff-${diffOrders}`);
 }
 
-function generateTable(data, filter, replace) {
-    const now = data.date;
+function generateTable(data, now, filter, replace) {
     const parent = document.createElement(replace.tagName);
     parent.id = replace.id;
 
-    for (const k of Object.keys(data.status)) {
-        const v = data.status[k];
+    for (const k of Object.keys(data)) {
+        const v = data[k];
         const i = ITEMS_MAP[k];
         if (!i || !filter(i, v)) {
             continue;
@@ -131,15 +132,26 @@ function generateTable(data, filter, replace) {
     replace.parentNode.replaceChild(parent, replace);
 }
 
+function renderTables() {
+    if (!FETCH_DATE || !ITEMS_MAP || !STATUS_MAP) {
+        return;
+    }
+    const now = new Date();
+
+    generateTable(STATUS_MAP, now, i => i.testmode, document.getElementById('tableTests'));
+    generateTable(STATUS_MAP, now, i => !i.testmode, document.getElementById('tableTtems'));
+
+    document.getElementById('gendate').innerText = now.toISOString();
+    document.getElementById('fetchdate').innerText = FETCH_DATE.toISOString();
+}
+
 async function loadStatus() {
     const res = await fetch('/status');
     const text = await res.text();
     const data = JSON.parse(text, dateReviver);
 
-    generateTable(data, i => i.testmode, document.getElementById('tableTests'));
-    generateTable(data, i => !i.testmode, document.getElementById('tableTtems'));
-
-    document.getElementById('gendate').innerText = data.date.toISOString();
+    FETCH_DATE = data.date;
+    STATUS_MAP = data.statusText;
 }
 
 async function loadItems() {
@@ -173,4 +185,5 @@ function tryLoadStatus() {
 function main() {
     tryloadItems();
     tryLoadStatus();
+    setInterval(renderTables, 100);
 }
