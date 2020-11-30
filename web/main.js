@@ -1,3 +1,5 @@
+'use strict';
+
 const RENDER_INTERVAL = 500;
 const FETCH_PAUSE = 1000;
 
