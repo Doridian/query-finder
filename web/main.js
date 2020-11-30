@@ -151,7 +151,7 @@ async function loadStatus() {
     const data = JSON.parse(text, dateReviver);
 
     FETCH_DATE = data.date;
-    STATUS_MAP = data.statusText;
+    STATUS_MAP = data.status;
 }
 
 async function loadItems() {
