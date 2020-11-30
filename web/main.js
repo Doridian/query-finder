@@ -1,6 +1,9 @@
+const RENDER_MIN_INTERVAL = 500;
+
 let ITEMS_MAP = {};
 let STATUS_MAP = {};
 let FETCH_DATE = undefined;
+let RENDER_DATE = undefined;
 
 function dateReviver(_key , value) {
     if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{1,3}Z$/.test(value)) {
@@ -83,12 +86,12 @@ function formatDateDiff(date, relativeTo, suffix = ' ago', prefix = '') {
     return makeTextSpan(`${prefix}${strArray.join(' ')}${suffix}`, `diff-${diffOrders}`);
 }
 
-function generateTable(data, now, filter, replace) {
+function generateTable(filter, replace) {
     const parent = document.createElement(replace.tagName);
     parent.id = replace.id;
 
-    for (const k of Object.keys(data)) {
-        const v = data[k];
+    for (const k of Object.keys(STATUS_MAP)) {
+        const v = STATUS_MAP[k];
         const i = ITEMS_MAP[k];
         if (!i || !filter(i, v)) {
             continue;
@@ -121,10 +124,10 @@ function generateTable(data, now, filter, replace) {
         tdStatus.className = `status-${v.type}`;
         tr.appendChild(tdStatus);
 
-        tr.appendChild(makeElementWithChild('td', formatDateDiff(v.date, now)));
-        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastOutOfStock, now)));
-        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastStock, now)));
-        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastError, now)));
+        tr.appendChild(makeElementWithChild('td', formatDateDiff(v.date, RENDER_DATE)));
+        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastOutOfStock, RENDER_DATE)));
+        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastStock, RENDER_DATE)));
+        tr.appendChild(makeElementWithChild('td', formatDateRange(v.dateLastError, RENDER_DATE)));
 
         parent.appendChild(tr);
     }
@@ -136,13 +139,21 @@ function renderTables() {
     if (!FETCH_DATE || !ITEMS_MAP || !STATUS_MAP) {
         return;
     }
-    const now = new Date();
+    RENDER_DATE = new Date();
 
-    generateTable(STATUS_MAP, now, i => i.testmode, document.getElementById('tableTests'));
-    generateTable(STATUS_MAP, now, i => !i.testmode, document.getElementById('tableTtems'));
+    generateTable(i => i.testmode, document.getElementById('tableTests'));
+    generateTable(i => !i.testmode, document.getElementById('tableTtems'));
 
-    document.getElementById('gendate').innerText = now.toISOString();
+    document.getElementById('gendate').innerText = RENDER_DATE.toISOString();
     document.getElementById('fetchdate').innerText = FETCH_DATE.toISOString();
+}
+
+function renderTablesDebounced() {
+    const now = new Date();
+    if (now - RENDER_DATE < RENDER_MIN_INTERVAL) {
+        return;
+    }
+    renderTables();
 }
 
 async function loadStatus() {
@@ -189,5 +200,5 @@ function tryLoadStatus() {
 function main() {
     tryloadItems();
     tryLoadStatus();
-    setInterval(renderTables, 500);
+    setInterval(renderTablesDebounced, 100);
 }
