@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs';
 import { createServer, ServerResponse } from 'http';
 import { join, normalize } from 'path';
-import { isFullyInited, ITEMS_MAP, LAST_STATUS_MAP } from './globals';
+import { isFullyInited, ITEMS_MAP, LAST_STATUS_MAP, writeStatus } from './globals';
 
 const approot = join(__dirname, '../');
 const webroot = join(approot, './web');
@@ -70,6 +70,7 @@ function sendJSON(response: ServerResponse, data: any) {
 export function startWebUI() {
     const srv = createServer((request, response) => {
         const url = request.url!;
+        const method = request.method!.toUpperCase();
     
         switch (url) {
             case '/status':
@@ -84,6 +85,18 @@ export function startWebUI() {
                     inited: isFullyInited(),
                     items: ITEMS_MAP,
                 });
+                break;
+            case '/reseterror':
+                if (method !== 'POST') {
+                    sendError(response, 'Wrong method', 400);
+                    break;
+                }
+                for (const k of Object.keys(LAST_STATUS_MAP)) {
+                    const v = LAST_STATUS_MAP[k];
+                    delete v.dateLastError;
+                }
+                writeStatus();
+                sendJSON(response, { ok: true });
                 break;
             case '/favicon.ico':
                 sendError(response, '', 404);
