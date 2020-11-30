@@ -60,6 +60,9 @@ function formatDateRange(dateRange, now) {
 
 function formatDateDiff(date, relativeTo, suffix = ' ago', prefix = '') {
     let diff = Math.floor((relativeTo.getTime() - date.getTime()) / 1000);
+    if (diff < 0) {
+        diff = 0;
+    }
     if (diff > MAX_TIME_AGO) {
         return makeTextSpan(date.toISOString());
     }
