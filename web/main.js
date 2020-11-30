@@ -185,5 +185,5 @@ function tryLoadStatus() {
 function main() {
     tryloadItems();
     tryLoadStatus();
-    setInterval(renderTables, 100);
+    setInterval(renderTables, 500);
 }
