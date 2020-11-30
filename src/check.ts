@@ -70,7 +70,7 @@ async function checkItem(item: Item) {
 export async function tryCheckItem(item: Item, allowNotify: boolean) {
     let result = false;
     let errored = false;
-    const curStatus: Status = LAST_STATUS_MAP[item.name] || { text: '', date: '', type: 'error' };
+    const curStatus: Status = LAST_STATUS_MAP[item.name] || { lastError: 'Not fetched yet', date: new Date(), type: 'error' };
 
     try {
         const matches = await Promise.race([
