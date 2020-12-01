@@ -16,11 +16,29 @@ async function refreshProxies() {
         if (!line) {
             continue;
         }
-        const [ip,port,username,password] = line.trim().split(':');
-        if (!ip || !port || !username || !password) {
+        const lineTrim = line.trim();
+        if (!lineTrim) {
             continue;
         }
-        newProxies.push(`socks5://${username}:${password}@${ip}:${port}`);
+        const l = lineTrim.split(':');
+        switch (l.length) {
+            case 4:
+                // IP:PORT:USER:PW
+                newProxies.push(`socks5://${l[2]}:${l[3]}@${l[0]}:${l[1]}`);
+                break;
+            case 3:
+                // IP:USER:PW
+                newProxies.push(`socks5://${l[1]}:${l[2]}@${l[0]}`);
+                break;
+            case 2:
+                // IP:PORT
+                newProxies.push(`socks5://${l[0]}:${l[1]}`);
+                break;
+            case 1:
+                // IP
+                newProxies.push(`socks5://${l[0]}`);
+                break;
+        }
     }
 
     if (PROXIES.length !== newProxies.length) {
