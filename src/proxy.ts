@@ -4,6 +4,7 @@ let PROXIES: string[] = [];
 let currentProxyIndex = 0;
 
 const proxyRefreshInterval = parseInt(process.env.PROXY_REFRESH_INTERVAL!, 10);
+const proxyType = process.env.PROXY_TYPE || 'socks5';
 
 async function refreshProxies() {
     const newProxies: string[] = [];
@@ -24,19 +25,19 @@ async function refreshProxies() {
         switch (l.length) {
             case 4:
                 // IP:PORT:USER:PW
-                newProxies.push(`socks5://${l[2]}:${l[3]}@${l[0]}:${l[1]}`);
+                newProxies.push(`${proxyType}://${l[2]}:${l[3]}@${l[0]}:${l[1]}`);
                 break;
             case 3:
                 // IP:USER:PW
-                newProxies.push(`socks5://${l[1]}:${l[2]}@${l[0]}`);
+                newProxies.push(`${proxyType}://${l[1]}:${l[2]}@${l[0]}`);
                 break;
             case 2:
                 // IP:PORT
-                newProxies.push(`socks5://${l[0]}:${l[1]}`);
+                newProxies.push(`${proxyType}://${l[0]}:${l[1]}`);
                 break;
             case 1:
                 // IP
-                newProxies.push(`socks5://${l[0]}`);
+                newProxies.push(`${proxyType}://${l[0]}`);
                 break;
         }
     }
