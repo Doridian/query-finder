@@ -4,20 +4,20 @@
         "name": "NewEgg Test",
         "sku": "N82E16820250109",
         "desc": "western-digital-black-sn750-nvme-500gb",
-        "enabled": true
+        "enabled": false
     },
     {
         "type": "bestbuy",
         "name": "BestBuy Test",
         "sku": "6247254",
         "desc": "insignia-32-class-led-hd-smart-fire-tv-edition-tv",
-        "enabled": true
+        "enabled": false
     },
     {
         "type": "amd",
         "name": "AMD Test",
         "sku": "5358857400",
-        "enabled": true
+        "enabled": false
     },
     {
         "type": "steam",
@@ -42,6 +42,6 @@
         "type": "antonline",
         "name": "antOnline Test",
         "sku": "Microsoft/Accessories/Hardware_Connectivity/Connector_Adapters/1400386",
-        "enabled": true
+        "enabled": false
     }
 ]
