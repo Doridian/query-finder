@@ -1,5 +1,6 @@
 import { FetchItem, Item } from './types';
 import { Curl, HeaderInfo } from 'node-libcurl';
+import { getProxy } from './proxy';
 
 const softTimeout = parseInt(process.env.SOFT_TIMEOUT!, 10);
 
@@ -14,8 +15,6 @@ export class HttpError extends Error {
         super(`HTTP Code: ${code}`);
     }
 }
-
-const proxyUrl = `socks5://${process.env.PROXY_USER}:${process.env.PROXY_PASSWORD}@${process.env.PROXY_HOST}`;
 
 function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47';
@@ -46,7 +45,7 @@ export async function fetchCustom(item: FetchItem) {
     ]);
     curl.setOpt('TIMEOUT_MS', softTimeout);
     if (item.needProxy) {
-        curl.setOpt('PROXY', proxyUrl);
+        curl.setOpt('PROXY', getProxy());
     }
 
     item.fetchState = 'start';

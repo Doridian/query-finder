@@ -5,6 +5,7 @@ import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals';
 import { startWebUI } from './webui';
 import { loadMatchers } from './matchers';
 import { tryCheckItem } from './check';
+import { refreshProxyLoop } from './proxy';
 
 startWebUI();
 
@@ -31,6 +32,8 @@ async function itemLoop(item: Item) {
 }
 
 async function main() {
+    await refreshProxyLoop();
+
     const tests = loadMatchers('testmatchers.json');
     const matchers = loadMatchers('matchers.json');
 
