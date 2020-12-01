@@ -13,7 +13,13 @@ async function refreshProxies() {
     });
     const data = await res.text();
     for (const line of data.split('\n')) {
+        if (!line) {
+            continue;
+        }
         const [ip,port,username,password] = line.trim().split(':');
+        if (!ip || !port || !username || !password) {
+            continue;
+        }
         newProxies.push(`socks5://${username}:${password}@${ip}:${port}`);
     }
 
