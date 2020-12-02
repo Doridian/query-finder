@@ -12,3 +12,10 @@ export function factory(cfg: MatcherBaseConfig) {
         needProxy: false,
     };
 }
+
+export const test = {
+    type: 'steam',
+    name: 'Steam Test',
+    sku: '1072820',
+    desc: 'Face_Gasket_for_Valve_Index_Headset__2_Pack',
+};

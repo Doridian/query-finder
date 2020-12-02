@@ -16,3 +16,10 @@ export function factory(cfg: MatcherBaseConfig) {
         //randomQueryParam: 'r',
     };
 }
+
+export const test = {
+    type: 'bestbuy',
+    name: 'BestBuy Test',
+    sku: '6247254',
+    desc: 'insignia-32-class-led-hd-smart-fire-tv-edition-tv',
+};

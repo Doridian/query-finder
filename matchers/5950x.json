@@ -1,0 +1,34 @@
+[
+    {
+        "type": "newegg",
+        "name": "NewEgg 5950x",
+        "sku": "N82E16819113663",
+        "desc": "amd-ryzen-9-5950x"
+    },
+    {
+        "type": "bestbuy",
+        "name": "BestBuy 5950x",
+        "sku": "6438941",
+        "desc": "amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler"
+    },
+    {
+        "type": "amd",
+        "name": "AMD 5950x",
+        "sku": "5450881400"
+    },
+    {
+        "type": "newegg_search",
+        "name": "NewEgg Search 5950x",
+        "sku": "5950x"
+    },
+    {
+        "type": "amazon",
+        "name": "Amazon 5950x",
+        "sku": "B0815Y8J9N"
+    },
+    {
+        "type": "antonline",
+        "name": "antOnline 5950x",
+        "sku": "AMD/Computers/Electronic_Components/Microprocessors/1411788"
+    }
+]

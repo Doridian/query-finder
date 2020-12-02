@@ -13,3 +13,9 @@ export function factory(cfg: MatcherBaseConfig) {
         statusCodes: [200, 404]
     };
 }
+
+export const test = {
+    type: 'antonline',
+    name: 'antOnline Test',
+    sku: 'Microsoft/Accessories/Hardware_Connectivity/Connector_Adapters/1400386',
+};

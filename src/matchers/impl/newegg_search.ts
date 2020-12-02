@@ -13,3 +13,9 @@ export function factory(cfg: MatcherBaseConfig) {
         //randomQueryParam: 'r',
     };
 }
+
+export const test = {
+    type: 'newegg_search',
+    name: 'NewEgg Search Test',
+    sku: '3800x',
+};

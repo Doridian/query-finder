@@ -14,3 +14,9 @@ export function factory(cfg: MatcherBaseConfig) {
         sleepMultiplier: 5,
     };
 }
+
+export const test = {
+    type: 'amazon',
+    name: 'Amazon Test',
+    sku: 'B07D998212',
+};

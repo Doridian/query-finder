@@ -3,7 +3,7 @@ require('dotenv').config();
 import { Item } from './types';
 import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals';
 import { startWebUI } from './webui';
-import { loadMatchers } from './matchers';
+import { loadAllItems, loadItems, loadTestItems } from './matchers';
 import { tryCheckItem } from './check';
 import { refreshProxyLoop } from './proxy';
 
@@ -34,14 +34,15 @@ async function itemLoop(item: Item) {
 async function main() {
     await refreshProxyLoop();
 
-    const tests = loadMatchers('testmatchers.json');
-    const matchers = loadMatchers('matchers.json');
+    const tests = loadTestItems();
+    const items = loadAllItems();
 
     tests.forEach(t => { t.testmode = true });
-    matchers.forEach(m => { m.testmode = false });
+    items.forEach(m => { m.testmode = false });
 
     await Promise.all(tests.map(t => testLoop(t)));
-    await Promise.all(matchers.map(m => itemLoop(m)));
+    
+    await Promise.all(items.map(m => itemLoop(m)));
 }
 
 main()

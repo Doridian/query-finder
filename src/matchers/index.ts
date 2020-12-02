@@ -15,8 +15,8 @@ export interface MatcherWithDescConfig extends MatcherBaseConfig {
 
 type MatcherFunc = (config: MatcherBaseConfig) => Item;
 const MATCHER_TYPES: { [key: string]: MatcherFunc } = {};
+const TEST_ITEMS: { [key: string]: Item } = {};
 
-// TODO: Iterate over this shit
 const dir = join(__dirname, 'impl');
 const files = readdirSync(dir);
 files.forEach(file => {
@@ -24,10 +24,30 @@ files.forEach(file => {
         return;
     }
     const name = file.split('.')[0];
-    MATCHER_TYPES[name] = require(join(dir, file)).factory as MatcherFunc;
+    const m = require(join(dir, file));
+    const mf = m.factory as MatcherFunc;
+    MATCHER_TYPES[name] = mf
+    TEST_ITEMS[name] = mf(m.test);
 });
 
-export function loadMatchers(file: string) {
+export function loadTestItems() {
+    return Object.values(TEST_ITEMS);
+}
+
+export function loadAllItems() {
+    const dir = 'matchers';
+    const files = readdirSync(dir);
+    let res: Item[] = [];
+    files.forEach(file => {
+        if (file.charAt(0) === '.') {
+            return;
+        }
+        res = res.concat(loadItems(join(dir, file)));
+    });
+    return res;
+}
+
+export function loadItems(file: string) {
     const data = JSON.parse(readFileSync(file, 'utf8')) as MatcherBaseConfig[];
     const matchers: Item[] = [];
     for (const d of data) {

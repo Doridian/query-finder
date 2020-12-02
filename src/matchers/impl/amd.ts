@@ -13,3 +13,9 @@ export function factory(cfg: MatcherBaseConfig) {
         //randomQueryParam: 'r',
     };
 }
+
+export const test = {
+    type: 'amd',
+    name: 'AMD Test',
+    sku: '5358857400',
+};

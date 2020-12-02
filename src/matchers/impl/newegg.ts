@@ -14,3 +14,10 @@ export function factory(cfg: MatcherBaseConfig) {
         //randomQueryParam: 'r',
     };
 }
+
+export const test = {
+    type: 'newegg',
+    name: 'NewEgg Test',
+    sku: 'N82E16820250109',
+    desc: 'western-digital-black-sn750-nvme-500gb',
+};
