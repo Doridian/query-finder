@@ -55,7 +55,7 @@ async function main() {
 
     const enabledItems = items
         .filter(i => !disabledStores.has(i.storeName.toLowerCase()))
-        .filter(i => !disabledProducts.has(i.name.toLowerCase()));
+        .filter(i => !disabledProducts.has(i.productName.toLowerCase()));
 
     const enabledItemNames = new Set(enabledItems.map(i => i.name));
     for (const k of Object.keys(ITEMS_MAP)) {
