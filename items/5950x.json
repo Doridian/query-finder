@@ -1,34 +1,28 @@
 [
     {
         "store": "newegg",
-        "name": "5950x",
         "sku": "N82E16819113663",
         "desc": "amd-ryzen-9-5950x"
     },
     {
         "store": "bestbuy",
-        "name": "5950x",
         "sku": "6438941",
         "desc": "amd-ryzen-9-5950x-4th-gen-16-core-32-threads-unlocked-desktop-processor-without-cooler"
     },
     {
         "store": "amd",
-        "name": "5950x",
         "sku": "5450881400"
     },
     {
         "store": "newegg_search",
-        "name": "5950x",
         "sku": "5950x"
     },
     {
         "store": "amazon",
-        "name": "5950x",
         "sku": "B0815Y8J9N"
     },
     {
         "store": "antonline",
-        "name": "5950x",
         "sku": "AMD/Computers/Electronic_Components/Microprocessors/1411788"
     }
 ]

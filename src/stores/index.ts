@@ -70,9 +70,16 @@ export function loadAllItems() {
 }
 
 export function loadItems(file: string) {
+    const name = file.split('.')[0];
     const data = JSON.parse(readFileSync(file, 'utf8')) as StoreItemConfig[];
+
     const items: Item[] = [];
     for (const d of data) {
+        if (d.name) {
+            d.name = `${name} ${d.name}`;
+        } else {
+            d.name = name;
+        }
         const i = callItemFactory(d);
         items.push(i);
     }

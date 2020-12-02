@@ -1,34 +1,28 @@
 [
     {
         "store": "newegg",
-        "name": "5900x",
         "sku": "N82E16819113664",
         "desc": "amd-ryzen-9-5900x"
     },
     {
         "store": "bestbuy",
-        "name": "5900x",
         "sku": "6438942",
         "desc": "amd-ryzen-9-5900x-4th-gen-12-core-24-threads-unlocked-desktop-processor-without-cooler"
     },
     {
         "store": "amd",
-        "name": "5900x",
         "sku": "5450881400"
     },
     {
         "store": "newegg_search",
-        "name": "5900x",
         "sku": "5900x"
     },
     {
         "store": "amazon",
-        "name": "5900x",
         "sku": "B08164VTWH"
     },
     {
         "store": "antonline",
-        "name": "5900x",
         "sku": "AMD/Computers/Electronic_Components/Microprocessors/1411789"
     }
 ]
