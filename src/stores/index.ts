@@ -38,14 +38,18 @@ function callItemFactory(config: StoreItemConfig): Item {
     if (!factory) {
         throw new Error(`Unknown store ${storeName}`);
     }
-    const item = factory(config);
-    return {
-        ...item,
+    const item = {
+        ...factory(config),
         name: `${storeName} ${config.name}`,
         productName: config.name,
         storeName,
         testmode: false,
     };
+    if (ITEMS_MAP[item.name]) {
+        throw new Error(`Duplicate item ${i.name}`);
+    }
+    ITEMS_MAP[item.name] = item;
+    return item;
 }
 
 export function loadTestItems() {
@@ -70,10 +74,6 @@ export function loadItems(file: string) {
     const items: Item[] = [];
     for (const d of data) {
         const i = callItemFactory(d);
-        if (ITEMS_MAP[i.name]) {
-            throw new Error(`Duplicate item ${i.name}`);
-        }
-        ITEMS_MAP[i.name] = i;
         items.push(i);
     }
     return items;
