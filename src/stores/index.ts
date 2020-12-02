@@ -46,7 +46,7 @@ function callItemFactory(config: StoreItemConfig): Item {
         testmode: false,
     };
     if (ITEMS_MAP[item.name]) {
-        throw new Error(`Duplicate item ${i.name}`);
+        throw new Error(`Duplicate item ${item.name}`);
     }
     ITEMS_MAP[item.name] = item;
     return item;
