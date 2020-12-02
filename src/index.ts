@@ -57,18 +57,17 @@ async function main() {
         .filter(i => !disabledStores.has(i.storeName.toLowerCase()))
         .filter(i => !disabledProducts.has(i.productName.toLowerCase()));
 
+    const neededStores: Set<string> = new Set();
+    enabledItems.forEach(i => neededStores.add(i.storeName));
+    const enabledTests = tests.filter(t => neededStores.has(t.storeName));
+
     const enabledItemNames = new Set(enabledItems.map(i => i.name));
+    enabledTests.forEach(t => enabledItemNames.add(t.name));
     for (const k of Object.keys(ITEMS_MAP)) {
         if (!enabledItemNames.has(k)) {
             delete ITEMS_MAP[k];
         }
     }
-
-    const neededStores: Set<string> = new Set();
-    enabledItems.forEach(i => {
-        neededStores.add(i.storeName);
-    });
-    const enabledTests = tests.filter(t => neededStores.has(t.storeName));
 
     await Promise.all(enabledTests.map(t => testLoop(t)));
     await Promise.all(enabledItems.map(m => itemLoop(m)));
