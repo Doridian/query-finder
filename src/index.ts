@@ -44,7 +44,7 @@ function parseEnvArrayLower(name: string) {
     return parseEnvArray(name).map(x => x.toLowerCase());
 }
 
-const disabledStores = new Set(parseEnvArrayLower('DISABLED_STORED'));
+const disabledStores = new Set(parseEnvArrayLower('DISABLED_STORES'));
 const disabledProducts = new Set(parseEnvArrayLower('DISABLED_PRODUCTS'));
 
 async function main() {
