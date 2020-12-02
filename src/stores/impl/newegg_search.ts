@@ -1,8 +1,7 @@
-import { MatcherBaseConfig } from '..';
+import { StoreItemConfig } from '..';
 
-export function factory(cfg: MatcherBaseConfig) {
+export function factory(cfg: StoreItemConfig) {
     return {
-        name: cfg.name,
         url: `https://www.newegg.com/p/pl?d=${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
@@ -15,7 +14,5 @@ export function factory(cfg: MatcherBaseConfig) {
 }
 
 export const test = {
-    type: 'newegg_search',
-    name: 'NewEgg Search Test',
     sku: '3800x',
 };

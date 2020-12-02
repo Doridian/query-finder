@@ -1,43 +1,43 @@
 [
     {
-        "type": "newegg",
-        "name": "NewEgg 3090 FTW3",
+        "store": "newegg",
+        "name": "3090 FTW3",
         "sku": "N82E16814487526",
         "desc": "evga-geforce-rtx-3090-24g-p5-3987-kr"
     },
     {
-        "type": "newegg",
-        "name": "NewEgg 3090 Strix",
+        "store": "newegg",
+        "name": "3090 Strix",
         "sku": "N82E16814126456",
         "desc": "asus-geforce-rtx-3090-rog-strix-rtx3090-o24g-gaming"
     },
     {
-        "type": "newegg",
-        "name": "NewEgg 3090 TUF",
+        "store": "newegg",
+        "name": "3090 TUF",
         "sku": "N82E16814126454",
         "desc": "asus-geforce-rtx-3090-tuf-rtx3090-o24g-gaming"
     },
     {
-        "type": "bestbuy",
-        "name": "BestBuy 3090 FTW3",
+        "store": "bestbuy",
+        "name": "3090 FTW3",
         "sku": "6436192",
         "desc": "evga-geforce-rtx-3090-ftw3-ultra-gaming-24gb-gddr6x-pci-express-4-0-graphics-card"
     },
     {
-        "type": "bestbuy",
-        "name": "BestBuy 3090 Strix",
+        "store": "bestbuy",
+        "name": "3090 Strix",
         "sku": "6432447",
         "desc": "asus-geforce-rtx-3090-24gb-gddr6x-pci-express-4-0-strix-graphics-card-black"
     },
     {
-        "type": "bestbuy",
-        "name": "BestBuy 3090 TUF",
+        "store": "bestbuy",
+        "name": "3090 TUF",
         "sku": "6432446",
         "desc": "asus-tuf-rtx-3090-24gb-gddr6x-pci-express-4-0-graphics-card-black"
     },
     {
-        "type": "amazon",
-        "name": "Amazon 3090 FTW3",
+        "store": "amazon",
+        "name": "3090 FTW3",
         "sku": "B08J5F3G18"
     }
 ]

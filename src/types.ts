@@ -30,6 +30,8 @@ export interface FetchItem {
 }
 
 export interface Item extends FetchItem, MinimalItem {
+    storeName: string;
+    productName: string;
     dataType: ItemDataType;
     matcher: ItemMatcherType;
     path: string;

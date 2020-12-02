@@ -1,7 +1,7 @@
 [
     {
-        "type": "steam",
-        "name": "Steam Index Base Station",
+        "store": "steam",
+        "name": "Index Base Station",
         "sku": "1059570",
         "desc": "Valve_Index_Base_Station"
     }

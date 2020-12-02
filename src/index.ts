@@ -3,9 +3,10 @@ require('dotenv').config();
 import { Item } from './types';
 import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals';
 import { startWebUI } from './webui';
-import { loadAllItems, loadItems, loadTestItems } from './matchers';
+import { loadAllItems, loadTestItems } from './stores';
 import { tryCheckItem } from './check';
 import { refreshProxyLoop } from './proxy';
+import { test } from './stores/impl/amazon';
 
 startWebUI();
 
@@ -31,18 +32,35 @@ async function itemLoop(item: Item) {
     setTimeout(itemLoop, sleepTime, item);
 }
 
+function parseEnvArray(name: string) {
+    const env = process.env[name];
+    if (!env) {
+        return [];
+    }
+    return env.split(',');
+}
+
+const disabledStores = new Set(parseEnvArray('DISABLED_STORED'));
+const disabledProducts = new Set(parseEnvArray('DISABLED_PRODUCTS'));
+
 async function main() {
     await refreshProxyLoop();
 
-    const tests = loadTestItems();
     const items = loadAllItems();
+    const tests = loadTestItems();
 
-    tests.forEach(t => { t.testmode = true });
-    items.forEach(m => { m.testmode = false });
+    const enabledItems = items
+        .filter(i => !disabledStores.has(i.storeName))
+        .filter(i => !disabledProducts.has(i.name));
 
-    await Promise.all(tests.map(t => testLoop(t)));
-    
-    await Promise.all(items.map(m => itemLoop(m)));
+    const neededStores: Set<string> = new Set();
+    enabledItems.forEach(i => {
+        neededStores.add(i.storeName);
+    });
+    const enabledTests = tests.filter(t => neededStores.has(t.storeName));
+
+    await Promise.all(enabledTests.map(t => testLoop(t)));
+    await Promise.all(enabledItems.map(m => itemLoop(m)));
 }
 
 main()

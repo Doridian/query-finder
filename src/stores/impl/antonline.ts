@@ -1,8 +1,7 @@
-import { MatcherBaseConfig } from '..';
+import { StoreItemConfig } from '..';
 
-export function factory(cfg: MatcherBaseConfig) {
+export function factory(cfg: StoreItemConfig) {
     return {
-        name: cfg.name,
         url: `https://www.antonline.com/${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
@@ -15,7 +14,5 @@ export function factory(cfg: MatcherBaseConfig) {
 }
 
 export const test = {
-    type: 'antonline',
-    name: 'antOnline Test',
     sku: 'Microsoft/Accessories/Hardware_Connectivity/Connector_Adapters/1400386',
 };

@@ -1,9 +1,8 @@
-import { MatcherBaseConfig, MatcherWithDescConfig } from '..';
+import { StoreItemConfig, StoreItemDescConfig } from '..';
 
-export function factory(cfg: MatcherBaseConfig) {
+export function factory(cfg: StoreItemConfig) {
     return {
-        name: cfg.name,
-        url: `https://store.steampowered.com/app/${cfg.sku}/${(cfg as MatcherWithDescConfig).desc}/`,
+        url: `https://store.steampowered.com/app/${cfg.sku}/${(cfg as StoreItemDescConfig).desc}/`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
@@ -14,8 +13,6 @@ export function factory(cfg: MatcherBaseConfig) {
 }
 
 export const test = {
-    type: 'steam',
-    name: 'Steam Test',
     sku: '1072820',
     desc: 'Face_Gasket_for_Valve_Index_Headset__2_Pack',
 };

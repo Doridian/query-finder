@@ -1,8 +1,7 @@
-import { MatcherBaseConfig } from '..';
+import { StoreItemConfig } from '..';
 
-export function factory(cfg: MatcherBaseConfig) {
+export function factory(cfg: StoreItemConfig) {
     return {
-        name: cfg.name,
         url: `https://www.amd.com/en/direct-buy/${cfg.sku}/us`,
         dataType: 'text',
         matcher: 'text_contains',
@@ -15,7 +14,5 @@ export function factory(cfg: MatcherBaseConfig) {
 }
 
 export const test = {
-    type: 'amd',
-    name: 'AMD Test',
     sku: '5358857400',
 };

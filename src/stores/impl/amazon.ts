@@ -1,8 +1,7 @@
-import { MatcherBaseConfig } from '..';
+import { StoreItemConfig } from '..';
 
-export function factory(cfg: MatcherBaseConfig) {
+export function factory(cfg: StoreItemConfig) {
     return {
-        name: cfg.name,
         url: `https://www.amazon.com/dp/${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
@@ -11,12 +10,9 @@ export function factory(cfg: MatcherBaseConfig) {
         errorValue: '/errors/validateCaptcha',
         notifyOnResult: true,
         needProxy: true,
-        sleepMultiplier: 5,
     };
 }
 
 export const test = {
-    type: 'amazon',
-    name: 'Amazon Test',
     sku: 'B07D998212',
 };

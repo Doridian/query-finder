@@ -1,10 +1,9 @@
-import { MatcherBaseConfig, MatcherWithDescConfig } from '..';
+import { StoreItemConfig, StoreItemDescConfig } from '..';
 
-export function factory(cfg: MatcherBaseConfig) {
+export function factory(cfg: StoreItemConfig) {
     return {
-        name: cfg.name,
         url: `https://www.newegg.com/product/api/ProductRealtime?ItemNumber=${cfg.sku}`,
-        browserUrl: `https://www.newegg.com/${(cfg as MatcherWithDescConfig).desc}/p/${cfg.sku}?Item=${cfg.sku}`,
+        browserUrl: `https://www.newegg.com/${(cfg as StoreItemDescConfig).desc}/p/${cfg.sku}?Item=${cfg.sku}`,
         dataType: 'json',
         matcher: 'object',
         path: 'MainItem.Instock',
@@ -16,8 +15,6 @@ export function factory(cfg: MatcherBaseConfig) {
 }
 
 export const test = {
-    type: 'newegg',
-    name: 'NewEgg Test',
     sku: 'N82E16820250109',
     desc: 'western-digital-black-sn750-nvme-500gb',
 };
