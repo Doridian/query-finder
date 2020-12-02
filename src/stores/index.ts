@@ -64,13 +64,13 @@ export function loadAllItems() {
         if (file.charAt(0) === '.') {
             return;
         }
-        res = res.concat(loadItems(join(dir, file)));
+        const name = file.split('.')[0];
+        res = res.concat(loadItems(name, join(dir, file)));
     });
     return res;
 }
 
-export function loadItems(file: string) {
-    const name = file.split('.')[0];
+export function loadItems(name: string file: string) {
     const data = JSON.parse(readFileSync(file, 'utf8')) as StoreItemConfig[];
 
     const items: Item[] = [];
