@@ -24,8 +24,8 @@ files.forEach(file => {
     }
     const name = file.split('.')[0];
     const cls = require(join(dir, file));
-    cls.test.store = name;
-    cls.test.name = `${name} test`;
+    cls.test.storeName = name;
+    cls.test.name = 'test';
     storeItemFactories[name] = cls.factory as StoreItemFactoryFunc;
     const testItem = callItemFactory(cls.test);
     testItem.testmode = true;
