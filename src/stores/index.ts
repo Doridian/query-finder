@@ -41,7 +41,7 @@ function callItemFactory(config: StoreItemConfig): Item {
     const item = factory(config);
     return {
         ...item,
-        name: `${storeName} config.name`,
+        name: `${storeName} ${config.name}`,
         productName: config.name,
         storeName,
         testmode: false,
