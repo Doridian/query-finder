@@ -70,7 +70,7 @@ export function loadAllItems() {
     return res;
 }
 
-export function loadItems(name: string file: string) {
+export function loadItems(name: string, file: string) {
     const data = JSON.parse(readFileSync(file, 'utf8')) as StoreItemConfig[];
 
     const items: Item[] = [];
