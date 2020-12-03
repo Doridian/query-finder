@@ -41,8 +41,8 @@ const dataTypeDecoder: { [key: string]: DataType } = {
     },
 };
 
-async function checkItem(item: Item) {
-    const res = await getItemPage(item);
+async function checkItem(item: Item, status: Status) {
+    const res = await getItemPage(item, status);
     const dataStr = await res.text();
     const data = await dataTypeDecoder[item.dataType](dataStr);
 
@@ -70,12 +70,17 @@ async function checkItem(item: Item) {
 export async function tryCheckItem(item: Item, allowNotify: boolean) {
     let result = false;
     let errored = false;
-    const curStatus: Status = LAST_STATUS_MAP[item.name] || { lastError: 'Not fetched yet', date: new Date(), type: 'error' };
+    const curStatus: Status = LAST_STATUS_MAP[item.name] || {
+        lastError: 'Not fetched yet',
+        fetchState: 'initial',
+        date: new Date(),
+        type: 'error'
+    };
 
     try {
         const matches = await Promise.race([
-            delay(hardTimeout).then(() => { throw new Error(`Hard timeout in fetchState ${item.fetchState}`) }),
-            checkItem(item),
+            delay(hardTimeout).then(() => { throw new Error(`Hard timeout in fetchState ${curStatus.fetchState}`) }),
+            checkItem(item, curStatus),
         ]);
         if (matches === item.notifyOnResult) {
             result = true;

@@ -1,4 +1,4 @@
-import { FetchItem, Item } from './types';
+import { FetchItem, Item, Status } from './types';
 import { Curl, HeaderInfo } from 'node-libcurl';
 import { getProxy } from './proxy';
 
@@ -20,7 +20,7 @@ function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47';
 }
 
-export async function fetchCustom(item: FetchItem) {
+export async function fetchCustom(item: FetchItem, itemStatus: Status) {
     let url = item.url;
     if (item.randomQueryParam) {
         let ch = url.includes('?') ?  '&' : '?';
@@ -48,11 +48,11 @@ export async function fetchCustom(item: FetchItem) {
         curl.setOpt('PROXY', getProxy());
     }
 
-    item.fetchState = 'start';
+    itemStatus.fetchState = 'start';
 
     return new Promise<MyResponse>((resolve, reject) => {
         curl.on('end', (status, data: string, curlHeaders: HeaderInfo[]) => {
-            item.fetchState = 'parse';
+            itemStatus.fetchState = 'parse';
             curl.close();
             
             const curlHdr = curlHeaders[0];
@@ -62,7 +62,7 @@ export async function fetchCustom(item: FetchItem) {
                 headers[k.toLowerCase()] = curlHdr[k];
             }
 
-            item.fetchState = `done ${headers['content-encoding']}`;
+            itemStatus.fetchState = `done ${headers['content-encoding']}`;
 
             resolve({
                 status,
@@ -74,21 +74,21 @@ export async function fetchCustom(item: FetchItem) {
         });
 
         curl.on('error', (err: any) => {
-            item.fetchState = 'errored';
+            itemStatus.fetchState = 'errored';
             curl.close();
             reject(err);
         });
 
         curl.perform();
 
-        item.fetchState = 'started';
+        itemStatus.fetchState = 'started';
     });
 }
 
 const DEFAULT_STATUS_CODES = [200];
 
-export async function getItemPage(item: Item) {
-    const res = await fetchCustom(item);
+export async function getItemPage(item: Item, status: Status) {
+    const res = await fetchCustom(item, status);
     if ((item.statusCodes || DEFAULT_STATUS_CODES).includes(res.status)) {
         return res;
     }

@@ -6,6 +6,7 @@ export interface DateRange {
 export type StatusType = 'instock' | 'outofstock' | 'error';
 export interface Status {
     lastError: string;
+    fetchState: string;
     type: StatusType;
     date: Date;
     dateLastStock?: DateRange;
@@ -26,7 +27,6 @@ export interface FetchItem {
     url: string;
     needProxy: boolean;
     randomQueryParam?: string;
-    fetchState?: string;
 }
 
 export interface Item extends FetchItem, MinimalItem {
