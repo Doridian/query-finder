@@ -45,7 +45,7 @@ function parseEnvArrayLower(name: string) {
 }
 
 const disabledStores = new Set(parseEnvArrayLower('DISABLED_STORES'));
-const disabledProducts = new Set(parseEnvArrayLower('DISABLED_PRODUCTS'));
+const enabledProducts = new Set(parseEnvArrayLower('ENABLED_PRODUCTS'));
 
 async function main() {
     await refreshProxyLoop();
@@ -55,7 +55,7 @@ async function main() {
 
     const enabledItems = items
         .filter(i => !disabledStores.has(i.storeName.toLowerCase()))
-        .filter(i => !disabledProducts.has(i.productName.toLowerCase()));
+        .filter(i => enabledProducts.has(i.productName.toLowerCase()));
 
     const neededStores: Set<string> = new Set();
     enabledItems.forEach(i => neededStores.add(i.storeName));
