@@ -26,6 +26,7 @@ async function testLoop(item: Item) {
     if (await tryCheckItem(item, false)) {
         console.log(`[${item.name}] TEST OK!`);
     }
+
     setImmediate(testLoop, item);
 }
 
@@ -34,6 +35,7 @@ async function itemLoop(item: Item) {
     await delay(sleepTime);
 
     await tryCheckItem(item, true);
+
     setImmediate(itemLoop, item);
 }
 
