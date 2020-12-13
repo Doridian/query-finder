@@ -69,8 +69,10 @@ async function main() {
         }
     }
 
-    await Promise.all(enabledTests.map(t => testLoop(t)));
-    await Promise.all(enabledItems.map(m => itemLoop(m)));
+    await Promise.all([
+        Promise.all(enabledTests.map(t => testLoop(t))),
+        Promise.all(enabledItems.map(m => itemLoop(m))),
+    ]);
 }
 
 main()
