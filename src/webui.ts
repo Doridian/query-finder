@@ -36,7 +36,7 @@ function sendFile(
         const stream = createReadStream(fsPath);
         
         let responseDead = false;
-		stream.on('error', (error: any) => {
+		stream.on('error', () => {
             responseDead = true;
             sendError(response, 'Not found', 404);
 		});
