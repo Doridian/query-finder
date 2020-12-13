@@ -7,6 +7,7 @@ import { loadAllItems, loadTestItems } from './stores';
 import { tryCheckItem } from './check';
 import { refreshProxyLoop } from './proxy';
 import { test } from './stores/impl/amazon';
+import { delay } from './util';
 
 startWebUI();
 
@@ -20,16 +21,20 @@ function getSleepTime(min: number, max: number) {
 
 async function testLoop(item: Item) {
     const sleepTime = getSleepTime(minSleepTest, maxSleepTest) * (item.sleepMultiplier || 1);
+    await delay(sleepTime);
+
     if (await tryCheckItem(item, false)) {
         console.log(`[${item.name}] TEST OK!`);
     }
-    setTimeout(testLoop, sleepTime, item);
+    setImmediate(testLoop, item);
 }
 
 async function itemLoop(item: Item) {
     const sleepTime = getSleepTime(minSleep, maxSleep) * (item.sleepMultiplier || 1);
+    await delay(sleepTime);
+
     await tryCheckItem(item, true);
-    setTimeout(itemLoop, sleepTime, item);
+    setImmediate(itemLoop, item);
 }
 
 function parseEnvArray(name: string) {
