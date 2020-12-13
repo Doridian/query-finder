@@ -17,19 +17,10 @@ export interface Status {
 export type ItemDataType = 'json' | 'text';
 export type ItemMatcherType = 'object' | 'text_contains';
 
-export interface MinimalItem {
+export interface Item {
     name: string;
     url: string;
     browserUrl?: string;
-}
-
-export interface FetchItem {
-    url: string;
-    needProxy: boolean;
-    randomQueryParam?: string;
-}
-
-export interface Item extends FetchItem, MinimalItem {
     storeName: string;
     productName: string;
     dataType: ItemDataType;
@@ -41,6 +32,8 @@ export interface Item extends FetchItem, MinimalItem {
     testmode?: boolean;
     statusCodes?: number[];
     sleepMultiplier?: number;
+    needProxy: boolean;
+    randomQueryParam?: string;
 }
 
 export class ElementNotFoundError extends Error { }

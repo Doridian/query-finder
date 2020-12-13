@@ -1,11 +1,12 @@
 import fetch from 'node-fetch';
 import { readFile } from 'fs';
 import { promisify } from 'util';
+import { Item } from './types';
 
 const readFileAsync = promisify(readFile);
 
 let PROXIES: string[] = [];
-let currentProxyIndex = 0;
+let currentProxyIndices: { [key: string]: number } = {};
 
 // This understands proxies in the following formats (decreasing order of preference):
 // 1. PROTOCOL://[USER:PASSWORD]@IP[:PORT]
@@ -90,18 +91,29 @@ async function refreshProxies() {
     }
 
     if (PROXIES.length !== newProxies.length) {
-        currentProxyIndex = 0;
+        currentProxyIndices = {};
     }
     PROXIES = newProxies;
     console.log(`Loaded proxy list: Got ${PROXIES.length}`);
 }
 
-export function getProxy() {
-    currentProxyIndex++;
-    if (currentProxyIndex >= PROXIES.length) {
-        currentProxyIndex = 0;
+function getProxyIndex(item: Item) {
+    const key = item.storeName;
+    let idx = currentProxyIndices[key];
+    if (idx === undefined) {
+        currentProxyIndices[key] = 0;
+        return 0;
     }
-    return PROXIES[currentProxyIndex];
+    idx++;
+    if (idx >= PROXIES.length) {
+        idx = 0;
+    }
+    currentProxyIndices[key] = idx;
+    return idx;
+}
+
+export function getProxy(item: Item) {
+    return PROXIES[getProxyIndex(item)];
 }
 
 export async function refreshProxyLoop() {

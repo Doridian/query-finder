@@ -1,4 +1,4 @@
-import { FetchItem, Item, Status } from './types';
+import { Item, Status } from './types';
 import { Curl, HeaderInfo } from 'node-libcurl';
 import { getProxy } from './proxy';
 
@@ -20,7 +20,7 @@ function getUserAgent() {
     return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.47';
 }
 
-export async function fetchCustom(item: FetchItem, itemStatus: Status) {
+export async function fetchCustom(item: Item, itemStatus: Status) {
     let url = item.url;
     if (item.randomQueryParam) {
         let ch = url.includes('?') ?  '&' : '?';
@@ -45,7 +45,7 @@ export async function fetchCustom(item: FetchItem, itemStatus: Status) {
     ]);
     curl.setOpt('TIMEOUT_MS', softTimeout);
     if (item.needProxy) {
-        curl.setOpt('PROXY', getProxy());
+        curl.setOpt('PROXY', getProxy(item));
     }
 
     itemStatus.fetchState = 'start';

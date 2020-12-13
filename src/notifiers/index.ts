@@ -1,4 +1,4 @@
-import { MinimalItem } from '../types';
+import { Item } from '../types';
 const TG = require('telegram-bot-api');
 
 const tgChatId = process.env.TELEGRAM_CHAT_ID;
@@ -6,7 +6,7 @@ const tgApi = new TG({
     token: process.env.TELEGRAM_ACCESS_TOKEN,
 });
 
-export async function notify(item: MinimalItem) {
+export async function notify(item: Item) {
     const notifyText = `FOUND: ${item.name} at ${item.browserUrl || item.url}`;
     await notifyRaw(notifyText);
 }
