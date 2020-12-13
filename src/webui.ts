@@ -56,7 +56,8 @@ function sendFile(
 		stream.on('end', () => response.end());
 		stream.pipe(response);
 	} catch (error: unknown) {
-		sendError(response, (error as Error).message);
+		console.error(`Error in WebUI ${error}`);
+		sendError(response, 'Internal server error');
 	}
 }
 
