@@ -1,6 +1,6 @@
 import { createReadStream } from 'fs';
 import { createServer, ServerResponse } from 'http';
-import { join, normalize } from 'path';
+import { join, relative, normalize, isAbsolute } from 'path';
 import { isFullyInited, ITEMS_MAP, LAST_STATUS_MAP, writeStatus } from './globals';
 
 const approot = join(__dirname, '../');
@@ -20,19 +20,25 @@ const contentTypeMap: Record<string, string> = {
 
 function sendFile(
 	response: ServerResponse,
-	path: string,
-	relativeTo: string = webroot
+	path: string
 ) {
 	path = normalize(`./${path}`);
 
-	const fsPath = join(relativeTo, path);
+    const fsPath = join(webroot, path);
+
+    const relPath = relative(webroot, fsPath);
+    if (!relPath || relPath.startsWith('..') || isAbsolute(relPath)) {
+        sendError(response, 'Bad request', 400);
+        return;
+    }
+
 	try {
         const stream = createReadStream(fsPath);
         
         let responseDead = false;
-		stream.on('error', (error) => {
+		stream.on('error', (error: any) => {
             responseDead = true;
-			sendError(response, error.message);
+            sendError(response, 'Not found', 404);
 		});
 
 		const pathSplit = path.split('.');
