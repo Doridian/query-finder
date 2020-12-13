@@ -6,7 +6,6 @@ import { startWebUI } from './webui';
 import { loadAllItems, loadTestItems } from './stores';
 import { tryCheckItem } from './check';
 import { refreshProxyLoop } from './proxy';
-import { test } from './stores/impl/amazon';
 import { delay } from './util';
 
 startWebUI();
