@@ -76,23 +76,24 @@ async function main() {
         }
     }
 
+    for (const k of Object.keys(LAST_STATUS_MAP)) {
+        if (ITEMS_MAP[k]) {
+            continue;
+        }
+        delete LAST_STATUS_MAP[k];
+    }
+    setFullyInited();
+    console.log('INIT DONE');
+
     await Promise.all([
         Promise.all(enabledTests.map(t => testLoop(t))),
         Promise.all(enabledItems.map(m => itemLoop(m))),
     ]);
+
+    console.log('FIRSTRUN DONE');
 }
 
 main()
-    .then(() => {
-        console.log('INIT DONE');
-        for (const k of Object.keys(LAST_STATUS_MAP)) {
-            if (ITEMS_MAP[k]) {
-                continue;
-            }
-            delete LAST_STATUS_MAP[k];
-        }
-        setFullyInited();
-    })
     .catch((e) => {
         console.error(e.stack || e);
         process.exit(1);
