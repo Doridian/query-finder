@@ -3,6 +3,7 @@ import { Curl, HeaderInfo } from 'node-libcurl';
 import { getProxy } from './proxy';
 
 const softTimeout = parseInt(process.env.SOFT_TIMEOUT!, 10);
+const ignoreSSL = process.env.IGNORE_SSL ? true : false;
 
 export interface MyResponse {
     status: number;
@@ -31,6 +32,9 @@ export async function fetchCustom(item: Item, itemStatus: Status) {
     curl.setOpt('URL', url);
     curl.setOpt('FOLLOWLOCATION', false);
     curl.setOpt('ACCEPT_ENCODING', '');
+    if (ignoreSSL) {
+        curl.setOpt('SSL_VERIFYPEER', 0);
+    }
     curl.setOpt('HTTPHEADER', [
         'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'accept-language: en-US,en;q=0.9',
