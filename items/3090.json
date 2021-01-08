@@ -39,5 +39,11 @@
         "store": "amazon",
         "name": "FTW3",
         "sku": "B08J5F3G18"
+    },
+    {
+        "store": "bestbuy",
+        "name": "FE",
+        "sku": "6429434",
+        "descr": "nvidia-geforce-rtx-3090-24gb-gddr6x-pci-express-4-0-graphics-card-titanium-and-black"
     }
 ]
