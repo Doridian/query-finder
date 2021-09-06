@@ -1,7 +1,8 @@
+import { ITEMS_MAP, LAST_STATUS_MAP, isFullyInited, writeStatus } from './globals';
+import { ServerResponse, createServer } from 'http';
+import { isAbsolute, join, normalize, relative } from 'path';
+
 import { createReadStream } from 'fs';
-import { createServer, ServerResponse } from 'http';
-import { join, relative, normalize, isAbsolute } from 'path';
-import { isFullyInited, ITEMS_MAP, LAST_STATUS_MAP, writeStatus } from './globals';
 
 const approot = join(__dirname, '../');
 const webroot = join(approot, './web');

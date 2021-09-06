@@ -1,5 +1,5 @@
-import { readFileSync, writeFile } from 'fs';
 import { Item, Status } from './types';
+import { readFileSync, writeFile } from 'fs';
 
 let FULLY_INITED = false;
 export function isFullyInited() {

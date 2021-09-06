@@ -1,12 +1,13 @@
 require('dotenv').config();
 
-import { Item } from './types';
 import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals';
-import { startWebUI } from './webui';
 import { loadAllItems, loadTestItems } from './stores';
-import { tryCheckItem } from './check';
-import { refreshProxyLoop } from './proxy';
+
+import { Item } from './types';
 import { delay } from './util';
+import { refreshProxyLoop } from './proxy';
+import { startWebUI } from './webui';
+import { tryCheckItem } from './check';
 
 startWebUI();
 

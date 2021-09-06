@@ -1,7 +1,7 @@
-import fetch from 'node-fetch';
-import { readFile } from 'fs';
-import { promisify } from 'util';
 import { Item } from './types';
+import fetch from 'node-fetch';
+import { promisify } from 'util';
+import { readFile } from 'fs';
 
 const readFileAsync = promisify(readFile);
 

@@ -1,5 +1,6 @@
-import { Item, Status } from './types';
 import { Curl, HeaderInfo } from 'node-libcurl';
+import { Item, Status } from './types';
+
 import { getProxy } from './proxy';
 
 const softTimeout = parseInt(process.env.SOFT_TIMEOUT!, 10);

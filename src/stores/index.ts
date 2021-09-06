@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
+
 import { ITEMS_MAP } from '../globals';
 import { Item } from '../types';
 import { join } from 'path';

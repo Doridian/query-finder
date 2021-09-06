@@ -1,10 +1,11 @@
-import { writeFile } from 'fs';
-import { endDateRange, typeToDateRange } from './date';
-import { LAST_STATUS_MAP, writeStatus } from './globals';
-import { getItemPage, HttpError } from './http';
-import { notify } from './notifiers';
 import { ElementNotFoundError, Item, Status, StatusType } from './types';
+import { HttpError, getItemPage } from './http';
+import { LAST_STATUS_MAP, writeStatus } from './globals';
+import { endDateRange, typeToDateRange } from './date';
+
 import { delay } from './util';
+import { notify } from './notifiers';
+import { writeFile } from 'fs';
 
 const hardTimeout = parseInt(process.env.HARD_TIMEOUT!, 10);
 
@@ -102,7 +103,7 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
             curStatus.lastError = `HTTP error: ${e.code}`;
         } else {
             curStatus.lastError = `Exception: ${e}`;
-            console.error(e.stack || e);
+            console.error((e as any).stack || e);
         }
         console.error(`[${item.name}] ${curStatus.lastError}`);
     }
