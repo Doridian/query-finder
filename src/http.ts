@@ -1,10 +1,11 @@
 import { Curl, HeaderInfo } from 'node-libcurl';
-import { Item, Status } from './types';
+import { Item, Status } from './types.js';
 
-import { getProxy } from './proxy';
+import { config } from './config.js';
+import { getProxy } from './proxy.js';
 
-const softTimeout = parseInt(process.env.SOFT_TIMEOUT!, 10);
-const ignoreSSL = process.env.IGNORE_SSL ? true : false;
+const softTimeout = parseInt(config.SOFT_TIMEOUT!, 10);
+const ignoreSSL = config.IGNORE_SSL ? true : false;
 
 export interface MyResponse {
     status: number;

@@ -1,4 +1,4 @@
-import { Item, Status } from './types';
+import { Item, Status } from './types.js';
 import { readFileSync, writeFile } from 'fs';
 
 let FULLY_INITED = false;

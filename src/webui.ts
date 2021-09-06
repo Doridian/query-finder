@@ -1,9 +1,12 @@
-import { ITEMS_MAP, LAST_STATUS_MAP, isFullyInited, writeStatus } from './globals';
+import { ITEMS_MAP, LAST_STATUS_MAP, isFullyInited, writeStatus } from './globals.js';
 import { ServerResponse, createServer } from 'http';
-import { isAbsolute, join, normalize, relative } from 'path';
+import { dirname, isAbsolute, join, normalize, relative } from 'path';
 
+import { config } from './config.js';
 import { createReadStream } from 'fs';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const approot = join(__dirname, '../');
 const webroot = join(approot, './web');
 
@@ -117,5 +120,5 @@ export function startWebUI() {
                 break;
         }
     });
-    srv.listen(process.env.PORT);
+    srv.listen(config.PORT);
 }

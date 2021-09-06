@@ -1,10 +1,10 @@
-import { Item } from '../types';
+import { Item } from '../types.js';
+import TG from 'telegram-bot-api';
+import { config } from '../config.js';
 
-const TG = require('telegram-bot-api');
-
-const tgChatId = process.env.TELEGRAM_CHAT_ID;
+const tgChatId = config.TELEGRAM_CHAT_ID;
 const tgApi = new TG({
-    token: process.env.TELEGRAM_ACCESS_TOKEN,
+    token: config.TELEGRAM_ACCESS_TOKEN,
 });
 
 export async function notify(item: Item) {

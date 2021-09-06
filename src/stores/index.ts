@@ -1,8 +1,9 @@
+import { dirname, join } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { readFileSync, readdirSync } from 'fs';
 
-import { ITEMS_MAP } from '../globals';
-import { Item } from '../types';
-import { join } from 'path';
+import { ITEMS_MAP } from '../globals.js';
+import { Item } from '../types.js';
 
 export interface StoreItemConfig {
     store: string;
@@ -17,21 +18,25 @@ type StoreItemFactoryFunc = (config: StoreItemConfig) => Omit<Item, 'storeName' 
 const storeItemFactories: { [key: string]: StoreItemFactoryFunc } = {};
 const storeTestItems: { [key: string]: Item } = {};
 
-const dir = join(__dirname, 'impl');
-const files = readdirSync(dir);
-files.forEach(file => {
-    if (file.charAt(0) === '.') {
-        return;
+export async function initStores() {
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const dir = join(__dirname, 'impl');
+    const files = readdirSync(dir);
+    for (const file of files) {
+        if (file.charAt(0) === '.') {
+            return;
+        }
+        const name = file.split('.')[0];
+        const url = pathToFileURL(join(dir, file));
+        const cls = await import(url.href);
+        cls.test.store = name;
+        cls.test.name = 'test';
+        storeItemFactories[name] = cls.factory as StoreItemFactoryFunc;
+        const testItem = callItemFactory(cls.test);
+        testItem.testmode = true;
+        storeTestItems[name] = testItem;
     }
-    const name = file.split('.')[0];
-    const cls = require(join(dir, file));
-    cls.test.store = name;
-    cls.test.name = 'test';
-    storeItemFactories[name] = cls.factory as StoreItemFactoryFunc;
-    const testItem = callItemFactory(cls.test);
-    testItem.testmode = true;
-    storeTestItems[name] = testItem;
-});
+}
 
 function callItemFactory(config: StoreItemConfig): Item {
     const storeName = config.store;

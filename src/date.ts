@@ -1,4 +1,4 @@
-import { DateRange, Status, StatusType } from './types';
+import { DateRange, Status, StatusType } from './types.js';
 
 export function typeToDateRange(curStatus: Status, curType: StatusType): DateRange {
     switch (curType) { 

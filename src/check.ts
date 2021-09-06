@@ -1,15 +1,16 @@
-import { ElementNotFoundError, Item, Status, StatusType } from './types';
-import { HttpError, getItemPage } from './http';
-import { LAST_STATUS_MAP, writeStatus } from './globals';
-import { endDateRange, typeToDateRange } from './date';
+import { ElementNotFoundError, Item, Status, StatusType } from './types.js';
+import { HttpError, getItemPage } from './http.js';
+import { LAST_STATUS_MAP, writeStatus } from './globals.js';
+import { endDateRange, typeToDateRange } from './date.js';
 import { mkdirSync, writeFile } from 'fs';
 
-import { delay } from './util';
-import { notify } from './notifiers';
+import { config } from './config.js';
+import { delay } from './util.js';
+import { notify } from './notifiers/index.js';
 
 mkdirSync('last', { recursive: true });
 
-const hardTimeout = parseInt(process.env.HARD_TIMEOUT!, 10);
+const hardTimeout = parseInt(config.HARD_TIMEOUT!, 10);
 
 type ItemMatcher = (data: any, path: any, value: any) => boolean | Promise<boolean>;
 

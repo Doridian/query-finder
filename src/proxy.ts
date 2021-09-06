@@ -1,4 +1,5 @@
-import { Item } from './types';
+import { Item } from './types.js';
+import { config } from './config.js';
 import fetch from 'node-fetch';
 import { promisify } from 'util';
 import { readFile } from 'fs';
@@ -13,7 +14,7 @@ let currentProxyIndices: { [key: string]: number } = {};
 // 2. IP:PORT:USER:PASSWORD
 // 3. IP:PORT
 
-const proxyRefreshInterval = parseInt(process.env.PROXY_REFRESH_INTERVAL!, 10);
+const proxyRefreshInterval = parseInt(config.PROXY_REFRESH_INTERVAL!, 10);
 
 function proxyTypeFromPort(port: string) {
     const portNumber = parseInt(port, 10);
@@ -65,9 +66,7 @@ function tryAddProxyLines(data: string, newProxies: string[]) {
 }
 
 async function refreshProxiesURL(url: string, newProxies: string[]) {
-    const res = await fetch(url, {
-        timeout: 5000,
-    });
+    const res = await fetch(url);
     tryAddProxyLines(await res.text(), newProxies);
 }
 
@@ -78,16 +77,16 @@ async function refreshProxiesFile(file: string, newProxies: string[]) {
 async function refreshProxies() {
     const newProxies: string[] = [];
 
-    if (process.env.PROXY_URL) {
-        await refreshProxiesURL(process.env.PROXY_URL, newProxies);
+    if (config.PROXY_URL) {
+        await refreshProxiesURL(config.PROXY_URL, newProxies);
     }
 
-    if (process.env.PROXY_FILE) {
-        await refreshProxiesFile(process.env.PROXY_FILE, newProxies);
+    if (config.PROXY_FILE) {
+        await refreshProxiesFile(config.PROXY_FILE, newProxies);
     }
 
-    if (process.env.PROXY) {
-        tryAddProxy(process.env.PROXY, newProxies);
+    if (config.PROXY) {
+        tryAddProxy(config.PROXY, newProxies);
     }
 
     if (PROXIES.length !== newProxies.length) {

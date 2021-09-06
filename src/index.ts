@@ -1,20 +1,19 @@
-require('dotenv').config();
+import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals.js';
+import { initStores, loadAllItems, loadTestItems } from './stores/index.js';
 
-import { ITEMS_MAP, LAST_STATUS_MAP, setFullyInited } from './globals';
-import { loadAllItems, loadTestItems } from './stores';
-
-import { Item } from './types';
-import { delay } from './util';
-import { refreshProxyLoop } from './proxy';
-import { startWebUI } from './webui';
-import { tryCheckItem } from './check';
+import { Item } from './types.js';
+import { config } from './config.js';
+import { delay } from './util.js';
+import { refreshProxyLoop } from './proxy.js';
+import { startWebUI } from './webui.js';
+import { tryCheckItem } from './check.js';
 
 startWebUI();
 
-const minSleep = parseInt(process.env.PAGE_SLEEP_MIN!, 10);
-const maxSleep = parseInt(process.env.PAGE_SLEEP_MAX!, 10);
-const minSleepTest = parseInt(process.env.TEST_SLEEP_MIN!, 10);
-const maxSleepTest = parseInt(process.env.TEST_SLEEP_MAX!, 10);
+const minSleep = parseInt(config.PAGE_SLEEP_MIN!, 10);
+const maxSleep = parseInt(config.PAGE_SLEEP_MAX!, 10);
+const minSleepTest = parseInt(config.TEST_SLEEP_MIN!, 10);
+const maxSleepTest = parseInt(config.TEST_SLEEP_MAX!, 10);
 function getSleepTime(min: number, max: number) {
     return min + (Math.random() * (max - min));
 }
@@ -55,6 +54,7 @@ const disabledStores = new Set(parseEnvArrayLower('DISABLED_STORES'));
 const enabledProducts = new Set(parseEnvArrayLower('ENABLED_PRODUCTS'));
 
 async function main() {
+    await initStores();
     await refreshProxyLoop();
 
     const items = loadAllItems();

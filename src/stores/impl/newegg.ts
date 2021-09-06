@@ -1,4 +1,4 @@
-import { StoreItemConfig, StoreItemDescConfig } from '..';
+import { StoreItemConfig, StoreItemDescConfig } from '../index.js';
 
 export function factory(cfg: StoreItemConfig) {
     return {
