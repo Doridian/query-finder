@@ -2,10 +2,12 @@ import { ElementNotFoundError, Item, Status, StatusType } from './types';
 import { HttpError, getItemPage } from './http';
 import { LAST_STATUS_MAP, writeStatus } from './globals';
 import { endDateRange, typeToDateRange } from './date';
+import { mkdirSync, writeFile } from 'fs';
 
 import { delay } from './util';
 import { notify } from './notifiers';
-import { writeFile } from 'fs';
+
+mkdirSync('last', { recursive: true });
 
 const hardTimeout = parseInt(process.env.HARD_TIMEOUT!, 10);
 
