@@ -9,6 +9,7 @@ RUN npm ci && npm run build
 RUN chown nobody:nobody /opt/app
 
 VOLUME /opt/app/.env
+VOLUME /opt/app/status.json
 
 EXPOSE 8988
 
