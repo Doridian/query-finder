@@ -1,10 +1,6 @@
 FROM node:lts-alpine
 
-COPY src/ /opt/app/src
-COPY items /opt/app/items
-COPY tsconfig.json /opt/app/tsconfig.json
-COPY package.json /opt/app/package.json
-COPY package-lock.json /opt/app/package-lock.json
+COPY . /opt/app
 WORKDIR /opt/app
 
 RUN npm ci && npm run build
