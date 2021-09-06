@@ -1,5 +1,7 @@
 FROM node:lts-alpine
 
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
+
 COPY . /opt/app
 WORKDIR /opt/app
 
