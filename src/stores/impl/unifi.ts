@@ -13,5 +13,5 @@ export function factory(cfg: StoreItemConfig) {
 }
 
 export const test = {
-    sku: 'unifi-network-switching/products/unifi-switch-8-150w',
+    sku: 'unifi-accessories/products/unifi-g4-instant-cover',
 };
