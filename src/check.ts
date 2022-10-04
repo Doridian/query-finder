@@ -8,7 +8,9 @@ import { config } from './config.js';
 import { delay } from './util.js';
 import { notify } from './notifiers/index.js';
 
-mkdirSync('last', { recursive: true });
+const LAST_DIR = process.env.LAST_DIR || './last';
+
+mkdirSync(LAST_DIR, { recursive: true });
 
 const hardTimeout = parseInt(config.HARD_TIMEOUT!, 10);
 
@@ -50,7 +52,7 @@ async function checkItem(item: Item, status: Status) {
     const dataStr = await res.text();
     const data = await dataTypeDecoder[item.dataType](dataStr);
 
-    writeFile(`last/${item.name}.${item.dataType}`, dataStr, (err) => {
+    writeFile(`${LAST_DIR}/${item.name}.${item.dataType}`, dataStr, (err) => {
         if (err) console.error(err);
     });
 

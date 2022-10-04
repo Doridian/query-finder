@@ -12,6 +12,7 @@ RUN apk add --no-cache ca-certificates && \
         chown root:root .
 
 ENV STATUS_JSON=/config/status.json
+ENV LAST_DIR=/config/last
 EXPOSE 8988
 VOLUME /config
 
