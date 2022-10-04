@@ -13,5 +13,5 @@ export function factory(cfg: StoreItemConfig) {
 }
 
 export const test = {
-    sku: 'unifi-accessories/products/unifi-g4-instant-cover',
+    sku: 'unifi-accessories-psu/products/u-mps-350w-ac',
 };
