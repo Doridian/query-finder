@@ -1,17 +1,19 @@
 FROM node:lts-alpine
 
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-
 COPY . /opt/app
 WORKDIR /opt/app
 
-RUN npm ci && npm run build
-RUN chown nobody:nobody /opt/app
+RUN apk add --no-cache ca-certificates && \
+        mkdir -p /config && \
+        ln -sf /config/.env ./.env && \
+        chown nobody:nobody /config && \
+        npm ci && \
+        npm run build && \
+        chown root:root .
 
-VOLUME /opt/app/.env
-VOLUME /opt/app/status.json
-
+ENV STATUS_JSON=/config/status.json
 EXPOSE 8988
+VOLUME /config
 
 USER nobody
 ENTRYPOINT ["node", "build/index.js"]

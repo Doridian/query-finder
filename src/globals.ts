@@ -1,6 +1,8 @@
 import { Item, Status } from './types.js';
 import { readFileSync, writeFile } from 'fs';
 
+const STATUS_JSON_FILE = process.env.STATUS_JSON || './status.json';
+
 let FULLY_INITED = false;
 export function isFullyInited() {
     return FULLY_INITED;
@@ -11,7 +13,7 @@ export function setFullyInited() {
 }
 
 export function writeStatus() {
-    writeFile('./status.json', JSON.stringify(LAST_STATUS_MAP), (err) => {
+    writeFile(STATUS_JSON_FILE, JSON.stringify(LAST_STATUS_MAP), (err) => {
         if (!err) {
             return;
         }
@@ -33,7 +35,7 @@ function loadStatus() {
     }
     let _status: { [key: string]: Status } = {};
     try {
-        _status = JSON.parse(readFileSync('./status.json', 'utf8'), reviver);
+        _status = JSON.parse(readFileSync(STATUS_JSON_FILE, 'utf8'), reviver);
     } catch (e) {
         console.error(e);
     }
