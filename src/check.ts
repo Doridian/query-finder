@@ -30,6 +30,17 @@ const itemMatcherType: { [key: string]: ItemMatcher } = {
         return curData === value;
     },
 
+    regexp_stock_level(data: string, _path: string, value: any) {
+        const re = new RegExp(value);
+        const m = data.match(re);
+        if (!m || !m[1]) {
+            throw new ElementNotFoundError(`NOT FOUND: RegExp: ${value}`);
+        }
+
+        const num = parseInt(m[1], 10);
+        return num > 0;
+    },
+
     text_contains(data: string, _path: string, value: any) {
         return data.includes(value);
     },
