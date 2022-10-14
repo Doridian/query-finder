@@ -1,0 +1,32 @@
+[
+    {
+        "store": "newegg",
+        "name": "Strix",
+        "sku": "N82E16814126593",
+        "desc": "asus-geforce-rtx-4090-rog-strix-rtx4090-o24g-gaming"
+    },
+    {
+        "store": "newegg",
+        "name": "TUF",
+        "sku": "N82E16814126594",
+        "desc": "asus-geforce-rtx-4090-tuf-rtx4090-o24g-gaming"
+    },
+    {
+        "store": "bandh",
+        "name": "Strix",
+        "sku": "1729257-REG",
+        "desc": "asus_rog_strix_rtx4090_o24g_gaming_geforce_rtx_4090_rog"
+    },
+    {
+        "store": "bandh",
+        "name": "TUF",
+        "sku": "1729258-REG",
+        "desc": "asus_tuf_rtx4090_o24g_gaming_geforce_rtx_4090_tuf"
+    },
+    {
+        "store": "bestbuy",
+        "name": "FE",
+        "sku": "6521430",
+        "descr": "nvidia-geforce-rtx-4090-24gb-gddr6x-graphics-card-titanium-and-black"
+    }
+]
