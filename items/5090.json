@@ -28,5 +28,23 @@
         "name": "FE",
         "sku": "6614151",
         "desc": "nvidia-geforce-rtx-5090-32gb-gddr7-graphics-card-dark-gun-metal"
+    },
+    {
+        "store": "bestbuy",
+        "name": "TUF OC",
+        "sku": "6614122",
+        "desc": "asus-tuf-gaming-nvidia-geforce-rtx-5090-32gb-gddr7-pci-express-5-0-graphics-card-black"
+    },
+    {
+        "store": "bestbuy",
+        "name": "TUF",
+        "sku": "6614119",
+        "desc": "asus-tuf-gaming-nvidia-geforce-rtx-5090-32gb-gddr7-pci-express-5-0-graphics-card-black"
+    },
+    {
+        "store": "bestbuy",
+        "name": "Astral OC",
+        "sku": "6614120",
+        "desc": "asus-rog-astral-nvidia-geforce-rtx-5090-32gb-gddr7-pci-express-5-0-graphics-card-black"
     }
 ]
