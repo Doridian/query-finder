@@ -8,7 +8,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         matcher: 'text_contains',
         path: '',
         value: ['Add to cart'],
-        notifyOnResult: true,
+        notifyOnResult: 'all',
         needProxy: true,
         //randomQueryParam: 'r',
     };

@@ -16,6 +16,7 @@ export interface Status {
 
 export type ItemDataType = 'json' | 'text';
 export type ItemMatcherType = 'object' | 'text_contains' | 'regexp_stock_level';
+export type MatchResult = 'all' | 'any' | 'none';
 
 export interface Item {
     name: string;
@@ -28,7 +29,7 @@ export interface Item {
     path: string;
     value: string[] | number[] | boolean[];
     errorValue?: string[] | number[] | boolean[];
-    notifyOnResult: boolean;
+    notifyOnResult: MatchResult;
     testmode?: boolean;
     statusCodes?: number[];
     sleepMultiplier?: number;

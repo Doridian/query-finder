@@ -9,7 +9,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         path: '',
         value: ['id="addToCart_feature_div"'],
         errorValue: ['/errors/validateCaptcha'],
-        notifyOnResult: true,
+        notifyOnResult: 'all',
         needProxy: true,
     };
 }

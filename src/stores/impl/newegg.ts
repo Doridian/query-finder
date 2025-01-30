@@ -9,7 +9,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         matcher: 'object',
         path: 'MainItem.Instock',
         value: [true],
-        notifyOnResult: true,
+        notifyOnResult: 'all',
         needProxy: true,
         //randomQueryParam: 'r',
     };

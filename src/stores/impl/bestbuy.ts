@@ -11,7 +11,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         matcher: 'object',
         path: `jsonGraph.shop.buttonstate.v5.item.skus.${cfg.sku}.conditions.NONE.destinationZipCode.${BESTBUY_ZIP}.storeId.${BESTBUY_STORE}.context.cyp.addAll.false.value.buttonStateResponseInfos.0.buttonState`,
         value: ['COMING_SOON', 'SOLD_OUT'],
-        notifyOnResult: false,
+        notifyOnResult: 'none',
         needProxy: false,
         //randomQueryParam: 'r',
     };

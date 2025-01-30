@@ -8,7 +8,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         matcher: 'text_contains',
         path: '',
         value: ['data-selenium="stockStatus">In Stock</span>'],
-        notifyOnResult: true,
+        notifyOnResult: 'all',
         needProxy: true
     };
 }

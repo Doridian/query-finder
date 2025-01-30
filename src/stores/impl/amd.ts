@@ -8,7 +8,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         matcher: 'text_contains',
         path: '',
         value: ['href="/en/direct-buy/add-to-cart/'],
-        notifyOnResult: true,
+        notifyOnResult: 'all',
         needProxy: false,
         //randomQueryParam: 'r',
     };

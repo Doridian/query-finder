@@ -1,4 +1,4 @@
-import { ElementNotFoundError, Item, Status, StatusType } from './types.js';
+import { ElementNotFoundError, Item, MatchResult, Status, StatusType } from './types.js';
 import { HttpError, getItemPage } from './http.js';
 import { LAST_STATUS_MAP, writeStatus } from './globals.js';
 import { endDateRange, typeToDateRange } from './date.js';
@@ -58,7 +58,7 @@ const dataTypeDecoder: { [key: string]: DataType } = {
     },
 };
 
-async function checkItem(item: Item, status: Status) {
+async function checkItem(item: Item, status: Status): Promise<MatchResult> {
     const res = await getItemPage(item, status);
     const dataStr = await res.text();
     const data = await dataTypeDecoder[item.dataType](dataStr);
@@ -81,15 +81,23 @@ async function checkItem(item: Item, status: Status) {
         }
     }
 
-    let result = false;
+    let foundMatch = false, foundNoMatch = false;
     for (const value of item.value) {
-        result = await matcher(data, item.path, value);
-        if (result) {
-            break;
+        const matches = await matcher(data, item.path, value);
+        if (matches) {
+            foundMatch = true;
+        } else {
+            foundNoMatch = true;
         }
     }
 
-    return result;
+    if (foundMatch && foundNoMatch) {
+        return 'any';
+    } else if (foundMatch) {
+        return 'all';
+    } else {
+        return 'none';
+    }
 }
 
 export async function tryCheckItem(item: Item, allowNotify: boolean) {

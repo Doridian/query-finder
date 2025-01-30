@@ -8,7 +8,7 @@ export function factory(cfg: StoreItemConfig): ItemImpl {
         matcher: 'regexp_stock_level',
         path: '',
         value: ['quantity: (-?[0-9]+),'],
-        notifyOnResult: true,
+        notifyOnResult: 'all',
         needProxy: true,
     };
 }
