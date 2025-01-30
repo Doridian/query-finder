@@ -19,14 +19,12 @@ function getSleepTime(min: number, max: number) {
 }
 
 async function testLoop(item: Item) {
-    const sleepTime = getSleepTime(minSleepTest, maxSleepTest) * (item.sleepMultiplier || 1);
-    await delay(sleepTime);
-
     if (await tryCheckItem(item, false)) {
         console.log(`[${item.name}] TEST OK!`);
     }
 
-    setImmediate(testLoop, item);
+    const sleepTime = getSleepTime(minSleepTest, maxSleepTest) * (item.sleepMultiplier || 1);
+    setTimeout(testLoop, sleepTime, item);
 }
 
 async function itemLoop(item: Item) {
@@ -85,10 +83,8 @@ async function main() {
     setFullyInited();
     console.log('INIT DONE');
 
-    await Promise.all([
-        Promise.all(enabledTests.map(t => testLoop(t))),
-        Promise.all(enabledItems.map(m => itemLoop(m))),
-    ]);
+    await Promise.all(enabledTests.map(t => testLoop(t)));
+    await Promise.all(enabledItems.map(m => itemLoop(m)));
 
     console.log('FIRSTRUN DONE');
 }
