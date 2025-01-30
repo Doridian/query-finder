@@ -22,5 +22,11 @@
         "name": "Astral OC",
         "sku": "1875529-REG",
         "desc": "asus_rog_astral_rtx5090_o32g_gaming_geforce_rtx_5090_republic"
+    },
+    {
+        "store": "bestbuy",
+        "name": "FE",
+        "sku": "6614151",
+        "desc": "nvidia-geforce-rtx-5090-32gb-gddr7-graphics-card-dark-gun-metal"
     }
 ]

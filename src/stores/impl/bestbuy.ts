@@ -1,6 +1,6 @@
 import { StoreItemConfig, StoreItemDescConfig } from '../index.js';
 
-const BESTBUY_ZIP = 98052;
+const BESTBUY_ZIP = 98034;
 const BESTBUY_STORE = 498;
 export function factory(cfg: StoreItemConfig) {
     return {
