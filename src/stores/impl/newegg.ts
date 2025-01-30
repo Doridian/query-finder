@@ -1,13 +1,14 @@
+import { ItemImpl } from '../../types.js';
 import { StoreItemConfig, StoreItemDescConfig } from '../index.js';
 
-export function factory(cfg: StoreItemConfig) {
+export function factory(cfg: StoreItemConfig): ItemImpl {
     return {
         url: `https://www.newegg.com/product/api/ProductRealtime?ItemNumber=${cfg.sku}`,
         browserUrl: `https://www.newegg.com/${(cfg as StoreItemDescConfig).desc}/p/${cfg.sku}?Item=${cfg.sku}`,
         dataType: 'json',
         matcher: 'object',
         path: 'MainItem.Instock',
-        value: true,
+        value: [true],
         notifyOnResult: true,
         needProxy: true,
         //randomQueryParam: 'r',

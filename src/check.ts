@@ -72,12 +72,20 @@ async function checkItem(item: Item, status: Status) {
     if (!data) {
         throw new ElementNotFoundError('Blank data');
     }
-
-    const result = await matcher(data, item.path, item.value);
     if (item.errorValue) {
-        const errorResult = await matcher(data, item.path, item.errorValue);
-        if (errorResult) {
-            throw new Error('Error condition found');
+        for (const errorValue in item.errorValue) {
+            const errorResult = await matcher(data, item.path, errorValue);
+            if (errorResult) {
+                throw new Error('Error condition found');
+            }
+        }
+    }
+
+    let result = false;
+    for (const value of item.value) {
+        result = await matcher(data, item.path, value);
+        if (result) {
+            break;
         }
     }
 

@@ -15,7 +15,7 @@ export interface Status {
 }
 
 export type ItemDataType = 'json' | 'text';
-export type ItemMatcherType = 'object' | 'text_contains';
+export type ItemMatcherType = 'object' | 'text_contains' | 'regexp_stock_level';
 
 export interface Item {
     name: string;
@@ -26,8 +26,8 @@ export interface Item {
     dataType: ItemDataType;
     matcher: ItemMatcherType;
     path: string;
-    value: string | number | boolean;
-    errorValue?: string | number | boolean;
+    value: string[] | number[] | boolean[];
+    errorValue?: string[] | number[] | boolean[];
     notifyOnResult: boolean;
     testmode?: boolean;
     statusCodes?: number[];
@@ -35,5 +35,7 @@ export interface Item {
     needProxy: boolean;
     randomQueryParam?: string;
 }
+
+export type ItemImpl = Omit<Item, 'storeName' | 'productName' | 'name'>;
 
 export class ElementNotFoundError extends Error { }

@@ -1,12 +1,13 @@
+import { ItemImpl } from '../../types.js';
 import { StoreItemConfig } from '../index.js';
 
-export function factory(cfg: StoreItemConfig) {
+export function factory(cfg: StoreItemConfig): ItemImpl {
     return {
         url: `https://www.antonline.com/${cfg.sku}`,
         dataType: 'text',
         matcher: 'text_contains',
         path: '',
-        value: '>Add to Cart</button>',
+        value: ['>Add to Cart</button>'],
         notifyOnResult: true,
         needProxy: false,
         statusCodes: [200, 404]
