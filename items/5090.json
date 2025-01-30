@@ -1,0 +1,26 @@
+[
+    {
+        "store": "bandh",
+        "name": "TUF",
+        "sku": "1875530-REG",
+        "desc": "asus_tuf_rtx5090_32g_gaming_geforce_rtx_5090_tuf"
+    },
+    {
+        "store": "bandh",
+        "name": "TUF OC",
+        "sku": "1875902-REG",
+        "desc": "asus_tuf_rtx5090_o32g_gaming_geforce_rtx_5090_tuf"
+    },
+    {
+        "store": "bandh",
+        "name": "Astral",
+        "sku": "1876781-REG",
+        "desc": "asus_rog_astral_rtx5090_32g_gaming_geforce_rtx_5090_republic"
+    },
+    {
+        "store": "bandh",
+        "name": "Astral OC",
+        "sku": "1875529-REG",
+        "desc": "asus_rog_astral_rtx5090_o32g_gaming_geforce_rtx_5090_republic"
+    }
+]
