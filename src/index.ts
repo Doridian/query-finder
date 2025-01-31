@@ -7,6 +7,7 @@ import { delay } from './util.js';
 import { refreshProxyLoop } from './proxy.js';
 import { startWebUI } from './webui.js';
 import { tryCheckItem } from './check.js';
+import { notifyRaw } from './notifiers/index.js';
 
 startWebUI();
 
@@ -87,6 +88,8 @@ async function main() {
     await Promise.all(enabledItems.map(m => itemLoop(m)));
 
     console.log('FIRSTRUN DONE');
+
+    await notifyRaw('Query-Finder startup completed!');
 }
 
 main()
