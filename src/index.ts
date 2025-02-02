@@ -7,7 +7,7 @@ import { delay } from './util.js';
 import { refreshProxyLoop } from './proxy.js';
 import { startWebUI } from './webui.js';
 import { tryCheckItem } from './check.js';
-import { notifyRaw } from './notifiers/index.js';
+import { notify } from './notifiers/index.js';
 
 startWebUI();
 
@@ -89,7 +89,9 @@ async function main() {
 
     console.log('FIRSTRUN DONE');
 
-    await notifyRaw('Query-Finder startup completed!');
+    await notify('Query-Finder startup completed!', {
+        disable_notification: true,
+    });
 }
 
 main()

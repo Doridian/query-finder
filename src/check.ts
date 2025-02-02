@@ -6,7 +6,7 @@ import { mkdirSync, writeFile } from 'fs';
 
 import { config } from './config.js';
 import { delay } from './util.js';
-import { notify } from './notifiers/index.js';
+import { notifyItem } from './notifiers/index.js';
 
 const LAST_DIR = process.env.LAST_DIR || './last';
 
@@ -120,7 +120,7 @@ export async function tryCheckItem(item: Item, allowNotify: boolean) {
             if (allowNotify) {
                 console.log(`[${item.name}] FOUND!`);
                 // Do not await this!
-                notify(item).catch((err: any) => {
+                notifyItem(item).catch((err: any) => {
                     console.error(err);
                 });
             }
