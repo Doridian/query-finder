@@ -54,7 +54,9 @@ const enabledProducts = new Set(parseEnvArrayLower('ENABLED_PRODUCTS'));
 
 async function main() {
     await initStores();
-    await refreshProxyLoop();
+    if (!(await refreshProxyLoop())) {
+        throw Error('Failed to load initial proxies');
+    }
 
     const items = loadAllItems();
     const tests = loadTestItems();

@@ -115,10 +115,14 @@ export function getProxy(item: Item) {
     return PROXIES[getProxyIndex(item)];
 }
 
-export async function refreshProxyLoop() {
+export async function refreshProxyLoop(): Promise<boolean> {
     try {
         await refreshProxies();
+    } catch (error) {
+        console.error('Error refreshing proxies:', error);
+        return false;
     } finally {
         setTimeout(refreshProxyLoop, proxyRefreshInterval);
     }
+    return true;
 }
