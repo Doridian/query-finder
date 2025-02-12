@@ -46,5 +46,20 @@
         "name": "Astral OC",
         "sku": "6614120",
         "desc": "asus-rog-astral-nvidia-geforce-rtx-5090-32gb-gddr7-pci-express-5-0-graphics-card-black"
+    },
+    {
+        "store": "amazon",
+        "name": "TUF OC",
+        "sku": "B0DS2X13PH"
+    },
+    {
+        "store": "amazon",
+        "name": "TUF",
+        "sku": "B0DS2Z8854"
+    },
+    {
+        "store": "amazon",
+        "name": "Astral OC",
+        "sku": "B0DS2WQZ2M"
     }
 ]
